@@ -6,6 +6,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./styles/About.css";
 import "./styles/primary.css";
 import "./styles/secondary.css";
+import "./styles/memory.css";
+import "./styles/home.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

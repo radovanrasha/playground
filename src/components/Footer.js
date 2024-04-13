@@ -4,7 +4,7 @@ import linkedin from "../assets/linkedin.png";
 const Footer = () => {
   return (
     <div className="footer">
-      <p> &copy; 2023 radovanrasha</p>
+      <p> &copy; 2024 radovanrasha</p>
       <div>
         <a href="mailto:ivanovicradovan18@gmail.com">
           <img className="footerIcon" src={gmail} alt="Profile" />

@@ -1,0 +1,75 @@
+.memory-solo-container {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  width: 100%;
+  padding: 0;
+  overflow-x: hidden;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10vh;
+  align-items: center;
+}
+
+.turns {
+  font-size: 20px;
+}
+
+.memory-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.memory-type-button {
+  width: 200px;
+  margin: 10px 0;
+}
+
+.memory-type-button-disabled {
+  width: 200px;
+  margin: 10px 0;
+  color: var(--text-color) !important;
+}
+
+.card-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.card {
+  position: relative;
+}
+
+.card img {
+  width: 100%;
+  display: block;
+  border: 2px solid #fff;
+  border-radius: 6px;
+}
+
+.card .front {
+  transform: rotateY(90deg);
+  transition: all ease-in 0.2s;
+  position: absolute;
+}
+
+.flipped .front {
+  transform: rotateY(0deg);
+  transition-delay: 0.2s;
+}
+
+.card .back {
+  transition: all ease-in 0.1s;
+  transition-delay: 0.2s;
+}
+
+.flipped .back {
+  transform: rotateY(90deg);
+  transition-delay: 0s;
+}

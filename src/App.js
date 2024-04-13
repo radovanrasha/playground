@@ -6,7 +6,8 @@ import Footer from "./components/Footer";
 import Projects from "./pages/Projects";
 import About from "./pages/About";
 import Home from "./pages/Home";
-import Memory from "./pages/Memory";
+import Memory from "./pages/MemoryGame/Memory";
+import MemorySoloGame from "./pages/MemoryGame/MemorySoloGame";
 
 function App() {
   return (
@@ -17,6 +18,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home></Home>}></Route>
             <Route path="/memory" element={<Memory></Memory>}></Route>
+            <Route
+              path="/memory-sologame"
+              element={<MemorySoloGame></MemorySoloGame>}
+            ></Route>
             <Route path="/projects" element={<Projects></Projects>}></Route>
             <Route path="/about" element={<About></About>}></Route>
             <Route path="/*" element={<Home></Home>}></Route>
