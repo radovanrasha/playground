@@ -39,7 +39,7 @@
   margin-top: 40px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 20px;
+  grid-gap: 10px;
 }
 
 .card {
@@ -72,4 +72,23 @@
 .flipped .back {
   transform: rotateY(90deg);
   transition-delay: 0s;
+}
+
+@media (min-width: 800px) {
+  .card-grid {
+    width: 80%;
+    grid-gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    width: 60%;
+  }
+}
+
+@media (min-width: 1400px) {
+  .card-grid {
+    width: 45%;
+  }
 }
