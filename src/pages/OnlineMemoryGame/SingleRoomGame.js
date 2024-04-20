@@ -28,33 +28,22 @@ const SingleRoom = () => {
   const hasMountedRef = useRef(false);
 
   useEffect(() => {
-    if (!hasMountedRef.current) {
-      if (!socket.connected) {
-        socket.connect();
-      }
-
-      socket.on("revealedCard", (data) => {
-        console.log("REVEAL CARD");
-        setRevealedCard(data.src);
-      });
-
-      return () => {
-        socket.disconnect();
-      };
+    if (!socket.connected) {
+      socket.connect();
     }
-  }, [clickedCard]);
+
+    socket.on("otkriveno", (data) => {
+      console.log("REVEAL CARD", data);
+      // setRevealedCard(data.src);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handleSelect = (index) => {
     socket.emit("revealCard", index);
-    setClickedCard(index);
-
-    // if (!choiceOne) {
-    //   setChoiceOne(index);
-    // } else {
-    //   if (choiceOne.id !== index.id) {
-    //     setChoiceTwo(index);
-    //   }
-    // }
   };
 
   useEffect(() => {
