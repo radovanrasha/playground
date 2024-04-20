@@ -20,8 +20,8 @@ const SingleRoom = () => {
   const [choiceOne, setChoiceOne] = useState();
   const [choiceTwo, setChoiceTwo] = useState();
   const [disabled, setDisabled] = useState(false);
-  const [revealedCard, setRevealedCard] = useState("");
-  const [clickedCard, setClickedCard] = useState("");
+  const [revealedCard, setRevealedCard] = useState();
+  const [clickedCard, setClickedCard] = useState();
 
   console.log("revealedCard", revealedCard);
 
@@ -34,9 +34,7 @@ const SingleRoom = () => {
 
     socket.on("revealedCard", (data) => {
       console.log("REVEAL CARD", data);
-      setRevealedCard(
-        "https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg"
-      );
+      setRevealedCard(data);
     });
 
     return () => {
@@ -69,7 +67,11 @@ const SingleRoom = () => {
       <div className="card-grid">
         {divsArray.map((num, index) => (
           <div key={num} className="box" onClick={() => handleSelect(index)}>
-            {revealedCard && <img src={`${revealedCard}`} />}
+            {revealedCard && index === revealedCard.index ? (
+              <img src={`/card-images/${revealedCard.src}.png`} />
+            ) : (
+              <img src={`/card-images/back.png`} />
+            )}
           </div>
         ))}
       </div>
