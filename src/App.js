@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Home from "./pages/Home";
 import Memory from "./pages/MemoryGame/Memory";
 import MemorySoloGame from "./pages/MemoryGame/MemorySoloGame";
+import MemoryOnlineHome from "./pages/OnlineMemoryGame/Home";
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
             <Route
               path="/memory-sologame"
               element={<MemorySoloGame></MemorySoloGame>}
+            ></Route>
+            <Route
+              path="/memory-multiplayer"
+              element={<MemoryOnlineHome></MemoryOnlineHome>}
             ></Route>
             <Route path="/projects" element={<Projects></Projects>}></Route>
             <Route path="/about" element={<About></About>}></Route>

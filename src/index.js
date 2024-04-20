@@ -7,6 +7,7 @@ import "./styles/About.css";
 import "./styles/primary.css";
 import "./styles/secondary.css";
 import "./styles/memory.css";
+import "./styles/memory-online.css";
 import "./styles/home.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

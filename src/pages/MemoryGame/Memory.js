@@ -12,9 +12,10 @@ const Memory = () => {
       <Button className="memory-type-button-disabled" disabled>
         Local multiplayer
       </Button>
-      <Button className="memory-type-button-disabled" disabled>
-        Online multiplayer
-      </Button>
+
+      <Link to="/memory-multiplayer">
+        <Button className="memory-type-button"> Online multiplayer</Button>
+      </Link>
     </div>
   );
 };
