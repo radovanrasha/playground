@@ -13,7 +13,7 @@ const MemoryOnlineHome = () => {
 
   return (
     <div className="memory-online-container">
-      {/* {typeOfGame === "home" && (
+      {typeOfGame === "home" && (
         <div className="home-content">
           <div className="join-options">
             <Button onClick={() => onChangeTypeOfGame("join-room")}>
@@ -35,9 +35,9 @@ const MemoryOnlineHome = () => {
         <div className="create-room-content">
           <CreateRoom />
         </div>
-      )} */}
+      )}
 
-      <SingleRoom />
+      {/* <SingleRoom /> */}
     </div>
   );
 };
