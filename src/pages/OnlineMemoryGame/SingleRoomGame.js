@@ -3,14 +3,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 
 const cardImages = [
-  { src: "./assets/imageone.png", id: 0, matched: false },
-  { src: "./assets/imagetwo.png", id: 0, matched: false },
-  { src: "./assets/imagethree.png", id: 0, matched: false },
-  { src: "./assets/imagefour.png", id: 0, matched: false },
-  { src: "./assets/imagefive.png", id: 0, matched: false },
-  { src: "./assets/imagesix.png", id: 0, matched: false },
-  { src: "./assets/imageseven.png", id: 0, matched: false },
-  { src: "./assets/imageeight.png", id: 0, matched: false },
+  { src: "../../card-images/imageone.png", id: 0, matched: false },
+  { src: "../../card-images/imagetwo.png", id: 0, matched: false },
+  { src: "../../card-images/imagethree.png", id: 0, matched: false },
+  { src: "../../card-images/imagefour.png", id: 0, matched: false },
+  { src: "../../card-images/imagefive.png", id: 0, matched: false },
+  { src: "../../card-images/imagesix.png", id: 0, matched: false },
+  { src: "../../card-images/imageseven.png", id: 0, matched: false },
+  { src: "../../card-images/imageeight.png", id: 0, matched: false },
 ];
 
 const SingleRoom = () => {
@@ -32,9 +32,11 @@ const SingleRoom = () => {
       socket.connect();
     }
 
-    socket.on("otkriveno", (data) => {
+    socket.on("revealedCard", (data) => {
       console.log("REVEAL CARD", data);
-      // setRevealedCard(data.src);
+      setRevealedCard(
+        "https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg"
+      );
     });
 
     return () => {
@@ -67,7 +69,7 @@ const SingleRoom = () => {
       <div className="card-grid">
         {divsArray.map((num, index) => (
           <div key={num} className="box" onClick={() => handleSelect(index)}>
-            {num}
+            {revealedCard && <img src={`${revealedCard}`} />}
           </div>
         ))}
       </div>
