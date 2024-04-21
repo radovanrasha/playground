@@ -5,7 +5,7 @@ import Rooms from "./Rooms";
 import SingleRoom from "./SingleRoomGame";
 
 const MemoryOnlineHome = () => {
-  const [typeOfGame, setTypeOfGame] = useState("home");
+  const [typeOfGame, setTypeOfGame] = useState("create-room");
 
   const onChangeTypeOfGame = (type) => {
     setTypeOfGame(type);
@@ -24,19 +24,6 @@ const MemoryOnlineHome = () => {
         >
           {typeOfGame === "create-room" ? "Join room ?" : "Create room?"}
         </Button>
-      )}
-
-      {typeOfGame === "home" && (
-        <div className="home-content">
-          <div className="join-options">
-            <Button onClick={() => onChangeTypeOfGame("join-room")}>
-              Join room
-            </Button>
-            <Button onClick={() => onChangeTypeOfGame("create-room")}>
-              Create room
-            </Button>
-          </div>
-        </div>
       )}
       {typeOfGame === "join-room" && (
         <div className="rooms-content">

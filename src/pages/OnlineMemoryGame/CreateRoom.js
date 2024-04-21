@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Radio } from "antd";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 
 const colors2 = ["#40e495", "#30dd8a", "#2bb673"];
 
@@ -14,10 +15,17 @@ const CreateRoom = () => {
 
   const [roomType, setRoomType] = useState("public");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
     }
+
+    socket.on("roomCreated", (data) => {
+      console.log("datadatadata", data);
+      navigate(`/memory-multiplayer/${data.roomId}`);
+    });
 
     return () => {
       socket.disconnect();
@@ -34,14 +42,13 @@ const CreateRoom = () => {
   };
 
   const onRadioChange = (e) => {
-    console.log("radio checked", e.target.value);
     setRoomType(e.target.value);
   };
 
   const submitForm = (e) => {
-    console.log("tessssssssss");
     e.preventDefault();
     socket.emit("createRoom", data);
+    localStorage.setItem("player", "firstPlayer");
   };
 
   return (
