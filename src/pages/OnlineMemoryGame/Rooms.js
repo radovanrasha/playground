@@ -4,11 +4,12 @@ import { message, notification, Button } from "antd";
 import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../../SocketContext";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
-  const socket = io("localhost:3007");
+  const socket = useSocket();
 
   const navigate = useNavigate();
 
@@ -21,18 +22,18 @@ const Rooms = () => {
   };
 
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
+    // if (!socket.connected) {
+    //   socket.connect();
+    // }
+    if (socket) {
+      socket.emit("getFreeRooms");
+      socket.on("freeRooms", (roomsArr) => {
+        setRooms(roomsArr);
+      });
     }
-    socket.emit("getFreeRooms");
-
-    socket.on("freeRooms", (roomsArr) => {
-      setRooms(roomsArr);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    // return () => {
+    //   socket.disconnect();
+    // };
   }, []);
 
   return (

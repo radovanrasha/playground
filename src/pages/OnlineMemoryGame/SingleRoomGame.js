@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-
-import { io } from "socket.io-client";
+import { useSocket } from "../../SocketContext";
 
 const SingleRoom = () => {
-  const socket = io("localhost:3007");
+  // const socket = io("localhost:3007");
   const { id } = useParams();
-
+  const socket = useSocket();
   // const [cardsArray, setCardsArray] = useState(cardImages);
   // const [choiceOne, setChoiceOne] = useState();
   // const [choiceTwo, setChoiceTwo] = useState();
@@ -15,18 +14,18 @@ const SingleRoom = () => {
   const [revealedCard, setRevealedCard] = useState();
 
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
+    // if (!socket.connected) {
+    //   socket.connect();
+    // }
+    if (socket) {
+      socket.on("revealedCard", (data) => {
+        console.log("REVEAL CARD", data);
+        setRevealedCard(data);
+      });
     }
-
-    socket.on("revealedCard", (data) => {
-      console.log("REVEAL CARD", data);
-      setRevealedCard(data);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    // return () => {
+    //   socket.disconnect();
+    // };
   }, []);
 
   const handleSelect = (index) => {

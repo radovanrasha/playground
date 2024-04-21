@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import CreateRoom from "./CreateRoom";
 import Rooms from "./Rooms";
-import SingleRoom from "./SingleRoomGame";
+import { io } from "socket.io-client";
 
 const MemoryOnlineHome = () => {
   const [typeOfGame, setTypeOfGame] = useState("create-room");
-
+  // const socket = io("localhost:3007");
   const onChangeTypeOfGame = (type) => {
     setTypeOfGame(type);
   };
+
+  useEffect(() => {
+    // if (!socket.connected) {
+    //   socket.connect();
+    // }
+    // return () => {
+    //   socket.disconnect();
+    //   console.log("Socket disconnected");
+    // };
+  }, []);
 
   return (
     <div className="memory-online-container">

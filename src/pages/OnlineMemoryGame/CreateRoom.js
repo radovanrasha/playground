@@ -2,39 +2,36 @@ import React, { useState, useEffect } from "react";
 import { Input, Button, Radio } from "antd";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../../SocketContext";
 
 const colors2 = ["#40e495", "#30dd8a", "#2bb673"];
 
 const CreateRoom = () => {
-  const socket = io("localhost:3007");
-
+  const socket = useSocket();
   const [data, setData] = useState({
     title: "",
     password: "",
   });
-
   const [roomType, setRoomType] = useState("public");
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
+    // const newSocket = io("localhost:3007");
+    // setSocket(newSocket);
+    // console.log("Socket initialized");
+    if (socket) {
+      socket.on("roomCreated", (data) => {
+        navigate(`/memory-multiplayer/${data.roomId}`);
+      });
     }
-
-    socket.on("roomCreated", (data) => {
-      console.log("datadatadata", data);
-      navigate(`/memory-multiplayer/${data.roomId}`);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+    // return () => {
+    //   newSocket.disconnect();
+    //   console.log("Socket disconnected");
+    // };
+  }, [socket]);
 
   const onInputChange = (e, type) => {
     const { value } = e.target;
-
     setData((prevState) => ({
       ...prevState,
       [type]: value,
@@ -47,7 +44,9 @@ const CreateRoom = () => {
 
   const submitForm = (e) => {
     e.preventDefault();
+
     socket.emit("createRoom", data);
+
     localStorage.setItem("player", "firstPlayer");
   };
 
