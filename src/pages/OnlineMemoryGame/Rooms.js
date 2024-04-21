@@ -14,6 +14,9 @@ const Rooms = () => {
 
   const onJoinRoom = (id) => {
     localStorage.setItem("player", "playerTwo");
+
+    socket.emit("joinRoom", id);
+
     navigate(`/memory-multiplayer/${id}`);
   };
 
