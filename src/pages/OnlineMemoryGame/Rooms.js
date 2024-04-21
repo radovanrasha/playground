@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
-import { message, notification, Button } from "antd";
-import { io } from "socket.io-client";
-import { Link } from "react-router-dom";
+import { Button } from "antd";
+
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
 
@@ -22,18 +20,12 @@ const Rooms = () => {
   };
 
   useEffect(() => {
-    // if (!socket.connected) {
-    //   socket.connect();
-    // }
     if (socket) {
       socket.emit("getFreeRooms");
       socket.on("freeRooms", (roomsArr) => {
         setRooms(roomsArr);
       });
     }
-    // return () => {
-    //   socket.disconnect();
-    // };
   }, []);
 
   return (

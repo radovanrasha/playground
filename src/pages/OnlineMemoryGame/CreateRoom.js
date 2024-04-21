@@ -16,18 +16,11 @@ const CreateRoom = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // const newSocket = io("localhost:3007");
-    // setSocket(newSocket);
-    // console.log("Socket initialized");
     if (socket) {
       socket.on("roomCreated", (data) => {
         navigate(`/memory-multiplayer/${data.roomId}`);
       });
     }
-    // return () => {
-    //   newSocket.disconnect();
-    //   console.log("Socket disconnected");
-    // };
   }, [socket]);
 
   const onInputChange = (e, type) => {
@@ -47,7 +40,7 @@ const CreateRoom = () => {
 
     socket.emit("createRoom", data);
 
-    localStorage.setItem("player", "firstPlayer");
+    localStorage.setItem("player", "playerOne");
   };
 
   return (

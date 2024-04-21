@@ -1,59 +1,101 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
 
 const SingleRoom = () => {
-  // const socket = io("localhost:3007");
   const { id } = useParams();
   const socket = useSocket();
-  // const [cardsArray, setCardsArray] = useState(cardImages);
-  // const [choiceOne, setChoiceOne] = useState();
-  // const [choiceTwo, setChoiceTwo] = useState();
-  // const [disabled, setDisabled] = useState(false);
-  // const [clickedCard, setClickedCard] = useState();
+
+  const [choices, setChoices] = useState({
+    cardOne: null,
+    cardTwo: null,
+  });
+  const [turns, setTurns] = useState(0);
+  const [disabled, setDisabled] = useState(false);
   const [revealedCard, setRevealedCard] = useState();
+  const [gameData, setGameData] = useState({});
+  const [cards, setCards] = useState([]);
+
+  console.log("cards", cards);
 
   useEffect(() => {
-    // if (!socket.connected) {
-    //   socket.connect();
-    // }
     if (socket) {
+      socket.emit("joinRoom", id);
       socket.on("revealedCard", (data) => {
-        console.log("REVEAL CARD", data);
         setRevealedCard(data);
       });
-    }
-    // return () => {
-    //   socket.disconnect();
-    // };
-  }, []);
 
-  const handleSelect = (index) => {
+      socket.emit("getGameInfo", id);
+
+      socket.on("gameInfo", (data) => {
+        setGameData(data);
+        setCards(data?.game?.cardsList);
+      });
+    }
+  }, [socket]);
+
+  const handleSelect = (card, index) => {
     socket.emit("revealCard", { index, id });
+
+    if (!choices.cardOne) {
+      setChoices((prevState) => ({
+        ...prevState,
+        cardOne: card,
+      }));
+    } else {
+      if (choices.cardOne !== card.id) {
+        setChoices((prevState) => ({
+          ...prevState,
+          cardTwo: card,
+        }));
+      }
+    }
   };
 
-  // useEffect(() => {
-  //   if (choiceOne && choiceTwo) {
-  //     compareCards();
-  //   }
-  // }, [choiceTwo]);
+  const compareCards = () => {
+    setDisabled(true);
+    if (
+      choices.cardOne.id !== choices.cardTwo.id &&
+      choices.cardOne.src === choices.cardTwo.src
+    ) {
+      let arr = cards;
+      for (let i = 0; i < cards.length; i++) {
+        if (cards[i].src === choices.cardOne.src) {
+          arr[i].matched = true;
+        }
+      }
+      setCards(arr);
+    }
+    setTimeout(() => {
+      resetTurn();
+    }, 600);
+  };
 
-  // const compareCards = () => {
-  //   console.log("test");
+  useEffect(() => {
+    if (choices.cardOne && choices.cardTwo) {
+      compareCards();
+    }
+  }, [choices]);
 
-  //   // setTimeout(() => {
-  //   //   resetTurn();
-  //   // }, 600);
-  // };
-
-  const divsArray = Array.from({ length: 16 }, (_, index) => index + 1);
+  const resetTurn = () => {
+    setChoices({
+      cardOne: null,
+      cardTwo: null,
+    });
+    setTurns((prev) => prev + 1);
+    setDisabled(false);
+  };
 
   return (
     <div className="memory-online-container">
       <div className="single-room-container">
         <div className="card-grid">
-          {divsArray.map((num, index) => (
-            <div key={num} className="box" onClick={() => handleSelect(index)}>
+          {cards?.map((card, index) => (
+            <div
+              key={card.id}
+              className="box"
+              onClick={() => handleSelect(card, index)}
+            >
               {revealedCard && index === revealedCard.index ? (
                 <img src={`/card-images/${revealedCard.src}.png`} />
               ) : (
