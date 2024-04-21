@@ -65,3 +65,20 @@
   width: 100%;
   height: 100%;
 }
+
+.free-rooms-container {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.freeroom-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 5px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+}
