@@ -13,6 +13,19 @@ const MemoryOnlineHome = () => {
 
   return (
     <div className="memory-online-container">
+      {typeOfGame !== "home" && (
+        <Button
+          className="join-after-button"
+          onClick={() =>
+            onChangeTypeOfGame(
+              typeOfGame === "create-room" ? "join-room" : "create-room"
+            )
+          }
+        >
+          {typeOfGame === "create-room" ? "Join room ?" : "Create room?"}
+        </Button>
+      )}
+
       {typeOfGame === "home" && (
         <div className="home-content">
           <div className="join-options">

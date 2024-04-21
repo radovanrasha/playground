@@ -1,3 +1,7 @@
+.memory-online-container {
+  position: relative;
+}
+
 .memory-online-container .home-content {
   height: calc(100vh - 52px);
   width: 100%;
@@ -9,6 +13,12 @@
 .memory-online-container .join-options {
   display: flex;
   gap: 20px;
+}
+
+.memory-online-container .join-after-button {
+  position: absolute;
+  top: 40px;
+  right: 20px;
 }
 
 .memory-online-container .rooms-content {
@@ -31,12 +41,43 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 20px;
 }
 
 .memory-online-container .create-room-content .create-room-container {
   width: 500px;
   height: 400px;
   background-color: #fff;
+  border-radius: 10px;
+  /* background-color: #433f33; */
+  padding: 16px;
+}
+
+.memory-online-container
+  .create-room-content
+  .create-room-container
+  .type-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.memory-online-container
+  .create-room-content
+  .create-room-container
+  .create-room-options {
+  margin-top: 16px;
+}
+
+.memory-online-container
+  .create-room-content
+  .create-room-container
+  .create-room-options
+  form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .memory-online-container .single-room-container {
