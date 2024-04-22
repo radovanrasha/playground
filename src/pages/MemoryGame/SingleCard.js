@@ -13,6 +13,7 @@ const SingleCard = ({ card, handleSelect, flipped, disabled }) => {
             }
           }}
           src={back}
+          alt="card back"
         />
       </div>
     </div>

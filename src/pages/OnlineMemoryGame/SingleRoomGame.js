@@ -17,6 +17,7 @@ const SingleRoom = () => {
   const [cards, setCards] = useState([]);
 
   console.log("cards", cards);
+  console.log("choices", choices);
 
   useEffect(() => {
     if (socket) {
@@ -38,14 +39,14 @@ const SingleRoom = () => {
     if (!choices.cardOne) {
       setChoices((prevState) => ({
         ...prevState,
-        cardOne: card,
+        cardOne: { ...card, index: index },
       }));
       socket.emit("revealCard", { index, id, type: "firstCard" });
     } else {
       if (choices.cardOne.id !== card.id) {
         setChoices((prevState) => ({
           ...prevState,
-          cardTwo: card,
+          cardTwo: { ...card, index: index },
         }));
         socket.emit("revealCard", {
           index,
@@ -53,27 +54,31 @@ const SingleRoom = () => {
           type: "secondCard",
           cardOne: choices.cardOne,
         });
+
+        setTimeout(() => {
+          resetTurn();
+        }, 600);
       }
     }
   };
 
   const compareCards = () => {
-    setDisabled(true);
-    if (
-      choices.cardOne.id !== choices.cardTwo.id &&
-      choices.cardOne.src === choices.cardTwo.src
-    ) {
-      let arr = cards;
-      for (let i = 0; i < cards.length; i++) {
-        if (cards[i].src === choices.cardOne.src) {
-          arr[i].matched = true;
-        }
-      }
-      setCards(arr);
-    }
-    setTimeout(() => {
-      resetTurn();
-    }, 600);
+    // setDisabled(true);
+    // if (
+    //   choices.cardOne.id !== choices.cardTwo.id &&
+    //   choices.cardOne.src === choices.cardTwo.src
+    // ) {
+    //   let arr = cards;
+    //   for (let i = 0; i < cards.length; i++) {
+    //     if (cards[i].src === choices.cardOne.src) {
+    //       arr[i].matched = true;
+    //     }
+    //   }
+    //   setCards(arr);
+    // }
+    // setTimeout(() => {
+    //   resetTurn();
+    // }, 600);
   };
 
   useEffect(() => {
@@ -98,13 +103,29 @@ const SingleRoom = () => {
           {cards?.map((card, index) => (
             <div
               key={card.id}
-              className="box"
+              className={`box ${
+                card.matched ||
+                choices?.cardOne?.index === index ||
+                choices?.cardTwo?.index === index
+                  ? "flipped"
+                  : ""
+              }`}
               onClick={() => handleSelect(card, index)}
             >
-              {card.matched ? (
-                <img src={`/card-images/${card.src}.png`} />
+              {card.matched ||
+              choices?.cardOne?.index === index ||
+              choices?.cardTwo?.index === index ? (
+                <img
+                  src={`/card-images/${card.src}.png`}
+                  className="front"
+                  alt="card front"
+                />
               ) : (
-                <img src={`/card-images/back.png`} />
+                <img
+                  src={`/card-images/back.png`}
+                  className="back"
+                  alt="card back"
+                />
               )}
             </div>
           ))}
