@@ -35,19 +35,24 @@ const SingleRoom = () => {
   }, [socket]);
 
   const handleSelect = (card, index) => {
-    socket.emit("revealCard", { index, id });
-
     if (!choices.cardOne) {
       setChoices((prevState) => ({
         ...prevState,
         cardOne: card,
       }));
+      socket.emit("revealCard", { index, id, type: "firstCard" });
     } else {
-      if (choices.cardOne !== card.id) {
+      if (choices.cardOne.id !== card.id) {
         setChoices((prevState) => ({
           ...prevState,
           cardTwo: card,
         }));
+        socket.emit("revealCard", {
+          index,
+          id,
+          type: "secondCard",
+          cardOne: choices.cardOne,
+        });
       }
     }
   };
@@ -96,8 +101,8 @@ const SingleRoom = () => {
               className="box"
               onClick={() => handleSelect(card, index)}
             >
-              {revealedCard && index === revealedCard.index ? (
-                <img src={`/card-images/${revealedCard.src}.png`} />
+              {card.matched ? (
+                <img src={`/card-images/${card.src}.png`} />
               ) : (
                 <img src={`/card-images/back.png`} />
               )}
