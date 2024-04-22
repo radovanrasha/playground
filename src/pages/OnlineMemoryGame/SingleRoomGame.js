@@ -101,32 +101,29 @@ const SingleRoom = () => {
       <div className="single-room-container">
         <div className="card-grid">
           {cards?.map((card, index) => (
-            <div
-              key={card.id}
-              className={`box ${
-                card.matched ||
-                choices?.cardOne?.index === index ||
-                choices?.cardTwo?.index === index
-                  ? "flipped"
-                  : ""
-              }`}
-              onClick={() => handleSelect(card, index)}
-            >
-              {card.matched ||
-              choices?.cardOne?.index === index ||
-              choices?.cardTwo?.index === index ? (
+            <div className="card">
+              <div
+                key={card.id}
+                className={` ${
+                  card.matched ||
+                  choices?.cardOne?.index === index ||
+                  choices?.cardTwo?.index === index
+                    ? "flipped"
+                    : ""
+                }`}
+                onClick={() => handleSelect(card, index)}
+              >
                 <img
                   src={`/card-images/${card.src}.png`}
                   className="front"
                   alt="card front"
                 />
-              ) : (
                 <img
                   src={`/card-images/back.png`}
                   className="back"
                   alt="card back"
                 />
-              )}
+              </div>
             </div>
           ))}
         </div>
