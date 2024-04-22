@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
+import ReactConfetti from "react-confetti";
+import { useWindowSize } from "react-use";
 
 const SingleRoom = () => {
   const { id } = useParams();
@@ -15,6 +17,10 @@ const SingleRoom = () => {
   const [revealedCard, setRevealedCard] = useState();
   const [gameData, setGameData] = useState({});
   const [cards, setCards] = useState([]);
+  const [showGameModal, setShowGameModal] = useState(false);
+  const { width, height } = useWindowSize();
+
+  console.log("gameData", gameData);
 
   console.log("cards", cards);
   console.log("choices", choices);
@@ -31,11 +37,16 @@ const SingleRoom = () => {
       socket.on("gameInfo", (data) => {
         setGameData(data);
         setCards(data?.game?.cardsList);
+
+        if (data.game.status === "finished") {
+          setShowGameModal(true);
+        }
       });
     }
   }, [socket]);
 
   const handleSelect = (card, index) => {
+    if (disabled) return;
     if (!choices.cardOne) {
       setChoices((prevState) => ({
         ...prevState,
@@ -44,6 +55,8 @@ const SingleRoom = () => {
       socket.emit("revealCard", { index, id, type: "firstCard" });
     } else {
       if (choices.cardOne.id !== card.id) {
+        setDisabled(true);
+
         setChoices((prevState) => ({
           ...prevState,
           cardTwo: { ...card, index: index },
@@ -128,6 +141,15 @@ const SingleRoom = () => {
           ))}
         </div>
       </div>
+      {showGameModal && (
+        <ReactConfetti
+          colors={["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]}
+          recycle={false}
+          numberOfPieces={400}
+          width={width}
+          height={height}
+        />
+      )}
     </div>
   );
 };
