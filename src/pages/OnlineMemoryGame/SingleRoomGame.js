@@ -165,11 +165,11 @@ const SingleRoom = () => {
       >
         <div>Game finished!</div>
         <p>
-          {gameData.game.playerOneScore > gameData.game.playerTwoScore
-            ? `Player one won ${gameData.game.playerOneScore} : ${gameData.game.playerTwoScore}`
-            : gameData.game.playerTwoScore > gameData.game.playerOneScore
-            ? `Player two won ${gameData.game.playerTwoOneScore}`
-            : `The game ended tie ${gameData.game.playerOneScore} : ${gameData.game.playerTwoScore}`}
+          {gameData?.game?.playerOneScore > gameData?.game?.playerTwoScore
+            ? `Player one won ${gameData?.game?.playerOneScore} : ${gameData?.game?.playerTwoScore}`
+            : gameData?.game?.playerTwoScore > gameData?.game?.playerOneScore
+            ? `Player two won ${gameData?.game?.playerTwoScore} : ${gameData?.game?.playerOneScore}`
+            : `The game ended tie ${gameData?.game?.playerOneScore} : ${gameData?.game?.playerTwoScore}`}
         </p>
       </Modal>
       {showGameModal && (
