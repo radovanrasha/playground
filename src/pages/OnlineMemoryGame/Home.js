@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import CreateRoom from "./CreateRoom";
 import Rooms from "./Rooms";
+import { useSocket } from "../../SocketContext";
 import { io } from "socket.io-client";
 
 const MemoryOnlineHome = () => {
+  const socket = useSocket();
+  const [rooms, setRooms] = useState([]);
   const [typeOfGame, setTypeOfGame] = useState("create-room");
-  // const socket = io("localhost:3007");
   const onChangeTypeOfGame = (type) => {
     setTypeOfGame(type);
   };
@@ -19,6 +21,12 @@ const MemoryOnlineHome = () => {
     //   socket.disconnect();
     //   console.log("Socket disconnected");
     // };
+    if (socket) {
+      socket.emit("getFreeRooms");
+      socket.on("freeRooms", (roomsArr) => {
+        setRooms(roomsArr);
+      });
+    }
   }, []);
 
   return (
@@ -37,7 +45,7 @@ const MemoryOnlineHome = () => {
       )}
       {typeOfGame === "join-room" && (
         <div className="rooms-content">
-          <Rooms />
+          <Rooms rooms={rooms} setRooms={setRooms} />
         </div>
       )}
 

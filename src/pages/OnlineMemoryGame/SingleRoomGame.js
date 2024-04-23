@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
 import ReactConfetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { Modal } from "antd";
 
 const SingleRoom = () => {
   const { id } = useParams();
@@ -19,11 +20,12 @@ const SingleRoom = () => {
   const [cards, setCards] = useState([]);
   const [showGameModal, setShowGameModal] = useState(false);
   const { width, height } = useWindowSize();
+  const [player, setPlayer] = useState(localStorage.getItem("player"));
 
-  console.log("gameData", gameData);
+  // console.log("gameData", gameData);
 
-  console.log("cards", cards);
-  console.log("choices", choices);
+  // console.log("cards", cards);
+  // console.log("choices", choices);
 
   useEffect(() => {
     if (socket) {
@@ -37,6 +39,12 @@ const SingleRoom = () => {
       socket.on("gameInfo", (data) => {
         setGameData(data);
         setCards(data?.game?.cardsList);
+        // console.log(data.game.nextTurn);
+        if (data.game.nextTurn !== player) {
+          setDisabled(true);
+        } else {
+          setDisabled(false);
+        }
 
         if (data.game.status === "finished") {
           setShowGameModal(true);
@@ -106,15 +114,19 @@ const SingleRoom = () => {
       cardTwo: null,
     });
     setTurns((prev) => prev + 1);
-    setDisabled(false);
+    // setDisabled(false);
   };
-
+  console.log(gameData);
   return (
     <div className="memory-online-container">
       <div className="single-room-container">
+        <div className="score-row">
+          <p>First player score: {gameData?.game?.playerOneScore}</p>
+          <p>Second player score: {gameData?.game?.playerTwoScore}</p>
+        </div>
         <div className="card-grid">
           {cards?.map((card, index) => (
-            <div className="card">
+            <div key={card._id} className="card">
               <div
                 key={card.id}
                 className={` ${
@@ -141,6 +153,22 @@ const SingleRoom = () => {
           ))}
         </div>
       </div>
+      <Modal
+        footer={[]}
+        onCancel={() => {
+          setShowGameModal(false);
+        }}
+        open={showGameModal}
+      >
+        <div>Game finished!</div>
+        <p>
+          {gameData.game.playerOneScore > gameData.game.playerTwoScore
+            ? `Player one won ${gameData.game.playerOneScore} : ${gameData.game.playerTwoScore}`
+            : gameData.game.playerTwoScore > gameData.game.playerOneScore
+            ? `Player two won ${gameData.game.playerTwoOneScore}`
+            : `The game ended tie ${gameData.game.playerOneScore} : ${gameData.game.playerTwoScore}`}
+        </p>
+      </Modal>
       {showGameModal && (
         <ReactConfetti
           colors={["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]}

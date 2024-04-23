@@ -4,9 +4,7 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-const Rooms = () => {
-  const [rooms, setRooms] = useState([]);
+const Rooms = ({ rooms, setRooms }) => {
   const socket = useSocket();
 
   const navigate = useNavigate();
@@ -14,7 +12,7 @@ const Rooms = () => {
   const onJoinRoom = (id) => {
     localStorage.setItem("player", "playerTwo");
 
-    socket.emit("joinRoom", id);
+    socket.emit("joinRoom", id, "playerTwo");
 
     navigate(`/memory-multiplayer/${id}`);
   };
