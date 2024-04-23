@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
+import { useNavigate } from "react-router-dom";
 import ReactConfetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { Modal } from "antd";
@@ -8,6 +9,7 @@ import { Modal } from "antd";
 const SingleRoom = () => {
   const { id } = useParams();
   const socket = useSocket();
+  const navigate = useNavigate();
 
   const [choices, setChoices] = useState({
     cardOne: null,
@@ -116,7 +118,7 @@ const SingleRoom = () => {
     setTurns((prev) => prev + 1);
     // setDisabled(false);
   };
-  console.log(gameData);
+  // console.log(gameData);
   return (
     <div className="memory-online-container">
       <div className="single-room-container">
@@ -157,6 +159,7 @@ const SingleRoom = () => {
         footer={[]}
         onCancel={() => {
           setShowGameModal(false);
+          navigate(`/memory-multiplayer`);
         }}
         open={showGameModal}
       >
