@@ -134,7 +134,8 @@ const SingleRoom = () => {
                 className={` ${
                   card.matched ||
                   choices?.cardOne?.index === index ||
-                  choices?.cardTwo?.index === index
+                  choices?.cardTwo?.index === index ||
+                  card.revealed
                     ? "flipped"
                     : ""
                 }`}
