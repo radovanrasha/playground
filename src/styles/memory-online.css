@@ -166,3 +166,11 @@
   height: 60px;
   margin: 15px;
 }
+
+.no-rooms-info {
+  color: var(--text-color);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: 25px;
+}

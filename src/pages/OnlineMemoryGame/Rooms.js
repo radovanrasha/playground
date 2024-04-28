@@ -28,8 +28,7 @@ const Rooms = ({ rooms, setRooms }) => {
 
   return (
     <div className="free-rooms-container">
-      {rooms &&
-        rooms.length > 0 &&
+      {rooms && rooms.length > 0 ? (
         rooms.map((item, index) => {
           return (
             <div key={item._id} className="freeroom-row">
@@ -43,7 +42,10 @@ const Rooms = ({ rooms, setRooms }) => {
               </Button>
             </div>
           );
-        })}
+        })
+      ) : (
+        <div className="no-rooms-info">No available rooms.</div>
+      )}
     </div>
   );
 };
