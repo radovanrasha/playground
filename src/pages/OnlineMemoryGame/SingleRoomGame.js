@@ -17,7 +17,6 @@ const SingleRoom = () => {
   });
   const [turns, setTurns] = useState(0);
   const [disabled, setDisabled] = useState(false);
-  const [revealedCard, setRevealedCard] = useState();
   const [gameData, setGameData] = useState({});
   const [cards, setCards] = useState([]);
   const [showGameModal, setShowGameModal] = useState(false);
@@ -32,9 +31,6 @@ const SingleRoom = () => {
   useEffect(() => {
     if (socket) {
       socket.emit("joinRoom", id);
-      socket.on("revealedCard", (data) => {
-        setRevealedCard(data);
-      });
 
       socket.emit("getGameInfo", id);
 
@@ -85,43 +81,28 @@ const SingleRoom = () => {
     }
   };
 
-  const compareCards = () => {
-    // setDisabled(true);
-    // if (
-    //   choices.cardOne.id !== choices.cardTwo.id &&
-    //   choices.cardOne.src === choices.cardTwo.src
-    // ) {
-    //   let arr = cards;
-    //   for (let i = 0; i < cards.length; i++) {
-    //     if (cards[i].src === choices.cardOne.src) {
-    //       arr[i].matched = true;
-    //     }
-    //   }
-    //   setCards(arr);
-    // }
-    // setTimeout(() => {
-    //   resetTurn();
-    // }, 600);
-  };
-
-  useEffect(() => {
-    if (choices.cardOne && choices.cardTwo) {
-      compareCards();
-    }
-  }, [choices]);
-
   const resetTurn = () => {
     setChoices({
       cardOne: null,
       cardTwo: null,
     });
+    socket.emit("restartTurn", { id });
     setTurns((prev) => prev + 1);
-    // setDisabled(false);
   };
-  // console.log(gameData);
+
   return (
     <div className="memory-online-container">
       <div className="single-room-container">
+        <div className="score-row">
+          <p>
+            {(gameData?.game?.nextTurn === "playerOne" &&
+              localStorage.getItem("player") === "playerOne") ||
+            (gameData?.game?.nextTurn === "playerTwo" &&
+              localStorage.getItem("player") === "playerTwo")
+              ? "Your turn"
+              : "Opponent turn"}
+          </p>
+        </div>
         <div className="score-row">
           <p>First player score: {gameData?.game?.playerOneScore}</p>
           <p>Second player score: {gameData?.game?.playerTwoScore}</p>
