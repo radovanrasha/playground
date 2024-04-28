@@ -14,13 +14,6 @@ const MemoryOnlineHome = () => {
   };
 
   useEffect(() => {
-    // if (!socket.connected) {
-    //   socket.connect();
-    // }
-    // return () => {
-    //   socket.disconnect();
-    //   console.log("Socket disconnected");
-    // };
     if (socket) {
       socket.emit("getFreeRooms");
       socket.on("freeRooms", (roomsArr) => {
@@ -31,18 +24,6 @@ const MemoryOnlineHome = () => {
 
   return (
     <div className="memory-online-container">
-      {typeOfGame !== "home" && (
-        <Button
-          className="join-after-button"
-          onClick={() =>
-            onChangeTypeOfGame(
-              typeOfGame === "create-room" ? "join-room" : "create-room"
-            )
-          }
-        >
-          {typeOfGame === "create-room" ? "Join room ?" : "Create room?"}
-        </Button>
-      )}
       {typeOfGame === "join-room" && (
         <div className="rooms-content">
           <Rooms rooms={rooms} setRooms={setRooms} />
@@ -54,8 +35,18 @@ const MemoryOnlineHome = () => {
           <CreateRoom />
         </div>
       )}
-
-      {/* <SingleRoom /> */}
+      {typeOfGame !== "home" && (
+        <Button
+          className="join-create-button"
+          onClick={() =>
+            onChangeTypeOfGame(
+              typeOfGame === "create-room" ? "join-room" : "create-room"
+            )
+          }
+        >
+          {typeOfGame === "create-room" ? "Join room" : "Create room"}
+        </Button>
+      )}
     </div>
   );
 };

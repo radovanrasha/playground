@@ -1,5 +1,9 @@
 .memory-online-container {
-  position: relative;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .memory-online-container .home-content {
@@ -13,12 +17,6 @@
 .memory-online-container .join-options {
   display: flex;
   gap: 20px;
-}
-
-.memory-online-container .join-after-button {
-  position: absolute;
-  top: 40px;
-  right: 20px;
 }
 
 .memory-online-container .rooms-content {
@@ -36,7 +34,6 @@
 }
 
 .memory-online-container .create-room-content {
-  height: calc(100vh - 52px);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -163,4 +160,9 @@
   border-radius: 10px;
   border: 1px solid var(--text-color);
   color: var(--text-color);
+}
+
+.join-create-button {
+  height: 60px;
+  margin: 15px;
 }
