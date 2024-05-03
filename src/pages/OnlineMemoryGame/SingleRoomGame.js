@@ -24,11 +24,6 @@ const SingleRoom = () => {
   const { width, height } = useWindowSize();
   const [player, setPlayer] = useState(localStorage.getItem("player"));
 
-  // console.log("gameData", gameData);
-
-  // console.log("cards", cards);
-  // console.log("choices", choices);
-
   useEffect(() => {
     if (socket) {
       socket.emit("joinRoom", id, localStorage.getItem("player"));
@@ -38,7 +33,7 @@ const SingleRoom = () => {
       socket.on("gameInfo", (data) => {
         setGameData(data);
         setCards(data?.game?.cardsList);
-        // console.log(data.game.nextTurn);
+
         if (data.game.nextTurn !== player) {
           setDisabled(true);
         } else {
@@ -100,7 +95,7 @@ const SingleRoom = () => {
   return (
     <div className="memory-online-container">
       <div className="single-room-container">
-        <div className="score-row">
+        <div className="turn-row">
           <p>
             {(gameData?.game?.nextTurn === "playerOne" &&
               localStorage.getItem("player") === "playerOne") ||
@@ -111,8 +106,12 @@ const SingleRoom = () => {
           </p>
         </div>
         <div className="score-row">
-          <p>First player score: {gameData?.game?.playerOneScore}</p>
-          <p>Second player score: {gameData?.game?.playerTwoScore}</p>
+          <div className="one-score">
+            First player score: {gameData?.game?.playerOneScore}
+          </div>
+          <div className="one-score">
+            Second player score: {gameData?.game?.playerTwoScore}
+          </div>
         </div>
         <div className="card-grid">
           {cards?.map((card, index) => (
