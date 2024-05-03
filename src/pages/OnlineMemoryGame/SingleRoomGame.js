@@ -17,6 +17,7 @@ const SingleRoom = () => {
   });
   const [turns, setTurns] = useState(0);
   const [disabled, setDisabled] = useState(false);
+  const [waitingForPlayers, setWaitingForPlayers] = useState(true);
   const [gameData, setGameData] = useState({});
   const [cards, setCards] = useState([]);
   const [showGameModal, setShowGameModal] = useState(false);
@@ -30,7 +31,7 @@ const SingleRoom = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("joinRoom", id);
+      socket.emit("joinRoom", id, localStorage.getItem("player"));
 
       socket.emit("getGameInfo", id);
 
@@ -42,6 +43,12 @@ const SingleRoom = () => {
           setDisabled(true);
         } else {
           setDisabled(false);
+        }
+
+        if (data?.game?.status === "waiting") {
+          setWaitingForPlayers(true);
+        } else {
+          setWaitingForPlayers(false);
         }
 
         if (data.game.status === "finished") {
@@ -162,6 +169,13 @@ const SingleRoom = () => {
           width={width}
           height={height}
         />
+      )}
+
+      {waitingForPlayers && (
+        <div className="overlay-waiting">
+          <div className="loader"></div>
+          <div className="loader-text">Waiting for second player...</div>
+        </div>
       )}
     </div>
   );
