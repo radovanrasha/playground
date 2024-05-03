@@ -107,10 +107,12 @@ const SingleRoom = () => {
         </div>
         <div className="score-row">
           <div className="one-score">
-            First player score: {gameData?.game?.playerOneScore}
+            <p>First player score: </p>
+            <p>{gameData?.game?.playerOneScore}</p>
           </div>
           <div className="one-score">
-            Second player score: {gameData?.game?.playerTwoScore}
+            <p>Second player score: </p>
+            <p>{gameData?.game?.playerTwoScore}</p>
           </div>
         </div>
         <div className="card-grid">

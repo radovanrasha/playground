@@ -74,22 +74,28 @@
   transition-delay: 0s;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 700px) {
   .card-grid {
-    width: 80%;
+    width: 90%;
     grid-gap: 20px;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 840px) {
   .card-grid {
-    width: 60%;
+    width: 70%;
   }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 990px) {
   .card-grid {
     width: 45%;
+  }
+}
+
+@media (min-width: 1700px) {
+  .card-grid {
+    width: 35%;
   }
 }
 

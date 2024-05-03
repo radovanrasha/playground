@@ -78,7 +78,7 @@
 }
 
 .memory-online-container .single-room-container {
-  width: 80%;
+  width: 90%;
   display: flex;
   color: var(--text-color);
   flex-direction: column;
@@ -96,7 +96,7 @@
 
 .score-row {
   width: 100%;
-  font-size: 20px;
+  font-size: 10px;
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -118,22 +118,35 @@
   );
 }
 
-@media (min-width: 800px) {
+@media (min-width: 400px) {
   .score-row {
-    width: 80%;
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 700px) {
+  .score-row {
+    width: 90%;
     grid-gap: 20px;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 840px) {
   .score-row {
-    width: 60%;
+    width: 70%;
   }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 990px) {
   .score-row {
     width: 45%;
+  }
+}
+
+@media (min-width: 1700px) {
+  .score-row {
+    width: 35%;
+    font-size: 20px;
   }
 }
 
