@@ -10,7 +10,9 @@ export const SocketProvider = ({ children }) => {
     const newSocket = io(process.env.REACT_APP_SERVER_URL);
     setSocket(newSocket);
 
-    return () => newSocket.close();
+    return () => {
+      newSocket.close();
+    };
   }, []);
 
   return (

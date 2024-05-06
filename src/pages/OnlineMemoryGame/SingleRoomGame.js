@@ -21,6 +21,7 @@ const SingleRoom = () => {
   const [gameData, setGameData] = useState({});
   const [cards, setCards] = useState([]);
   const [showGameModal, setShowGameModal] = useState(false);
+  const [canceledModal, setShowCanceledModal] = useState(false);
   const { width, height } = useWindowSize();
   const [player, setPlayer] = useState(localStorage.getItem("player"));
 
@@ -48,8 +49,21 @@ const SingleRoom = () => {
 
         if (data.game.status === "finished") {
           setShowGameModal(true);
+        } else if (data.game.status === "canceled") {
+          setShowCanceledModal(true);
+          setDisabled(true);
         }
       });
+
+      const handleUnload = () => {
+        socket.emit("gameCanceled", id);
+      };
+
+      window.addEventListener("beforeunload", handleUnload);
+
+      return () => {
+        window.removeEventListener("beforeunload", handleUnload);
+      };
     }
   }, [socket]);
 
@@ -160,6 +174,21 @@ const SingleRoom = () => {
             : gameData?.game?.playerTwoScore > gameData?.game?.playerOneScore
             ? `Player two won ${gameData?.game?.playerTwoScore} : ${gameData?.game?.playerOneScore}`
             : `The game ended tie ${gameData?.game?.playerOneScore} : ${gameData?.game?.playerTwoScore}`}
+        </p>
+      </Modal>
+      <Modal
+        footer={[]}
+        onCancel={() => {
+          setShowCanceledModal(false);
+          navigate(`/memory-multiplayer`);
+        }}
+        open={canceledModal}
+        className="canceled-modal"
+      >
+        <p className="title-canceled">Game canceled!</p>
+        <p className="desc-canceled">
+          One of players left the game so the game is canceled. Join other room
+          or create your own.
         </p>
       </Modal>
       {showGameModal && (

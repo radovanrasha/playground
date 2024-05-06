@@ -227,3 +227,16 @@
   justify-content: center;
   font-size: 25px;
 }
+
+.canceled-modal {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.title-canceled {
+  font-size: 20px;
+}
+
+.desc-canceled {
+}
