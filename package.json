@@ -17,7 +17,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "start:prod": "serve -s build -l 3006",
+    "build": "react-scripts build",
+    "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "eslintConfig": {
     "extends": [
