@@ -1,12 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "antd";
 
 const Home = () => {
   return (
     <div className="home-container">
-      <Link to="/memory-sologame">
-        <Button className="memory-type-button">Solo Memory Game</Button>
+      <Link to="/memory">
+        <button className="memory-type-button">Memory game</button>
       </Link>
     </div>
   );

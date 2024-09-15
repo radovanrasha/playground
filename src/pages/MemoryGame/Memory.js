@@ -5,17 +5,20 @@ import { Link } from "react-router-dom";
 const Memory = () => {
   return (
     <div className="memory-solo-container">
-      <Link to="/memory-sologame">
-        <Button className="memory-type-button">Solo</Button>
-      </Link>
-      <p> - Coming soon - </p>
+      <div className="memory-game-row">
+        <Link to="/memory-sologame">
+          <button className="memory-type-button">Solo memory game</button>
+        </Link>
+
+        <Link to="/memory-multiplayer">
+          <button className="memory-type-button"> Online multiplayer</button>
+        </Link>
+      </div>
+
+      <label> - Coming soon - </label>
       <Button className="memory-type-button-disabled" disabled>
         Local multiplayer
       </Button>
-
-      <Link to="/memory-multiplayer">
-        <Button className="memory-type-button"> Online multiplayer</Button>
-      </Link>
     </div>
   );
 };
