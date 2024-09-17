@@ -99,13 +99,14 @@ const Memory = () => {
   return (
     <div className="memory-solo-container">
       <div className="memory-info">
-        <Button
+        <button
+          className="memory-type-button"
           onClick={() => {
             restartGame();
           }}
         >
-          New game
-        </Button>
+          <span>New game</span>
+        </button>
         <p className="turns">Turns: {turns}</p>
       </div>
       <div className="card-grid">

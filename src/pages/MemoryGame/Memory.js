@@ -6,12 +6,16 @@ const Memory = () => {
   return (
     <div className="memory-solo-container">
       <div className="memory-game-row">
-        <Link to="/memory-sologame">
-          <button className="memory-type-button">Solo memory game</button>
+        <Link to="/memory-sologame" className="memory-type-link">
+          <button className="memory-type-button">
+            <span>Solo memory game</span>
+          </button>
         </Link>
 
-        <Link to="/memory-multiplayer">
-          <button className="memory-type-button"> Online multiplayer</button>
+        <Link to="/memory-multiplayer" className="memory-type-link">
+          <button className="memory-type-button">
+            <span>Online multiplayer</span>
+          </button>
         </Link>
       </div>
 

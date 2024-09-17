@@ -33,13 +33,14 @@ const Rooms = ({ rooms, setRooms }) => {
           return (
             <div key={item._id} className="freeroom-row">
               <p>{item.title}</p>
-              <Button
+              <button
+                className="memory-type-button"
                 onClick={() => {
                   onJoinRoom(item._id);
                 }}
               >
-                JOIN ROOM
-              </Button>
+                <span>JOIN ROOM</span>
+              </button>
             </div>
           );
         })
