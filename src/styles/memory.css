@@ -26,6 +26,7 @@
 
 .memory-game-row {
   display: flex;
+  flex-direction: column;
 }
 
 .memory-type-button {
@@ -45,6 +46,16 @@
   overflow: hidden;
   cursor: pointer;
   border: none;
+}
+
+.hoverable-icon {
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.hoverable-icon:hover {
+  transform: scale(1.2); /* Scale the icon */
 }
 
 .memory-type-button:after {
@@ -152,6 +163,9 @@
   .card-grid {
     width: 90%;
     grid-gap: 20px;
+  }
+  .memory-game-row {
+    flex-direction: row;
   }
 }
 

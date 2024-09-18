@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, Radio } from "antd";
-import { io } from "socket.io-client";
+import { Input, Button, Radio, Tooltip } from "antd";
 import { useNavigate } from "react-router-dom";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { useSocket } from "../../SocketContext";
 
 const colors2 = ["#40e495", "#30dd8a", "#2bb673"];
@@ -45,6 +45,14 @@ const CreateRoom = () => {
 
   return (
     <div className="create-room-container">
+      <div className="tooltip-info">
+        <Tooltip
+          placement="left"
+          title="Create a room by giving it a name and share this name with your friend. Your friend can then join the room by clicking the Join button next to the room name on Join page. Once you're both in the room, the game will begin!"
+        >
+          <InfoCircleOutlined className="hoverable-icon" />
+        </Tooltip>
+      </div>
       <div className="type-options">
         <h1>Create room</h1>
         <Radio.Group
@@ -81,14 +89,12 @@ const CreateRoom = () => {
           </div>
 
           <Button
+            style={{ width: "100%" }}
+            className="memory-type-button"
             type="submit"
-            style={{
-              background: `linear-gradient(135deg, ${colors2.join(", ")})`,
-              color: "#fff",
-            }}
             onClick={(e) => submitForm(e)}
           >
-            Create
+            <span>Create</span>
           </Button>
         </form>
       </div>
