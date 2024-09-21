@@ -90,7 +90,7 @@ const CreateRoom = () => {
 
           <Button
             style={{ width: "100%" }}
-            className="memory-type-button"
+            className="memory-type-button create-room-button"
             type="submit"
             onClick={(e) => submitForm(e)}
           >

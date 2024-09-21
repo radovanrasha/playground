@@ -29,6 +29,10 @@
   flex-direction: column;
 }
 
+.create-room-button {
+  height: 40px;
+}
+
 .memory-type-button {
   width: 300px;
   margin: 10px 10px 10px 0;
