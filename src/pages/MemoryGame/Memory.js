@@ -7,7 +7,7 @@ const Memory = () => {
     <div className="memory-solo-container">
       <div className="memory-game-row">
         <Link to="/memory-sologame" className="memory-type-link">
-          <button className="memory-type-button">
+          <button className="memory-type-button right-margin">
             <span>Solo memory game</span>
           </button>
         </Link>
