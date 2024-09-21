@@ -37,8 +37,8 @@
   width: 300px;
 }
 
-.right-margin {
-  margin-right: 10px;
+.left-button {
+  margin: 0 10px 10px 0;
 }
 
 .memory-type-button {
