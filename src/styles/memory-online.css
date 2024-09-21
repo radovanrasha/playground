@@ -44,25 +44,31 @@
 .memory-online-container .create-room-content .create-room-container {
   width: 500px;
   height: 400px;
-  background-color: #fff;
   border-radius: 10px;
-  /* background-color: #433f33; */
+  /* background-color: var(--text-color); */
   padding: 16px;
 }
 
 .tooltip-info {
   display: flex;
+  color: var(--text-color);
   flex-direction: row-reverse;
 }
 
-.memory-online-container
-  .create-room-content
-  .create-room-container
-  .type-options {
+.type-options {
+  color: var(--text-color-two);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+
+.create-room-radio label {
+  color: var(--text-color-two);
+}
+
+.input-group label {
+  color: var(--text-color-two);
 }
 
 .memory-online-container
@@ -133,6 +139,11 @@
   .score-row {
     width: 90%;
     grid-gap: 20px;
+  }
+
+  .type-options {
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 

@@ -54,11 +54,11 @@ const CreateRoom = () => {
         </Tooltip>
       </div>
       <div className="type-options">
-        <h1>Create room</h1>
+        <h1>CREATE ROOM</h1>
         <Radio.Group
+          className="create-room-radio"
           onChange={onRadioChange}
           value={roomType}
-          style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}
         >
           <Radio value="public">Public</Radio>
           <Radio value="private">Private</Radio>
