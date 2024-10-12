@@ -14,7 +14,6 @@ const SingleRoomBattleship = () => {
     .fill(null)
     .map(() => Array(10).fill());
 
-  //position h for horizontal and v for vertical
   const [myBoats, setMyBoats] = useState([
     {
       id: 0,
@@ -81,18 +80,32 @@ const SingleRoomBattleship = () => {
   }, [socket]);
 
   const handleSelectBoat = (item, index) => {
-    let boatsTemp = myBoats;
+    let boatsTemp = [...myBoats];
     boatsTemp[index] = { ...item, position: item.position === "h" ? "v" : "h" };
 
-    console.log(boatsTemp);
-
     setMyBoats(boatsTemp);
-
     setReRender(!rerender);
   };
 
   const handleDragStart = (event, boat) => {
     event.dataTransfer.setData("boat", JSON.stringify(boat));
+    removeBoatFromBoard(boat);
+  };
+
+  const removeBoatFromBoard = (boat) => {
+    const newBoard = board.map((row) => row.slice());
+
+    if (boat.placed && boat.rowIndex !== null && boat.colIndex !== null) {
+      for (let i = 0; i < boat.size; i++) {
+        if (boat.position === "h") {
+          newBoard[boat.rowIndex][boat.colIndex + i] = null;
+        } else {
+          newBoard[boat.rowIndex + i][boat.colIndex] = null;
+        }
+      }
+    }
+
+    setBoard(newBoard);
   };
 
   const placeBoatOnBoard = (boatData, rowIndex, colIndex) => {
@@ -104,16 +117,6 @@ const SingleRoomBattleship = () => {
       (boat.position === "v" && rowIndex + boat.size > 10)
     ) {
       return;
-    }
-
-    if (boat.placed && boat.rowIndex !== null && boat.colIndex !== null) {
-      for (let i = 0; i < boat.size; i++) {
-        if (boat.position === "h") {
-          newBoard[boat.rowIndex][boat.colIndex + i] = null;
-        } else {
-          newBoard[boat.rowIndex + i][boat.colIndex] = null;
-        }
-      }
     }
 
     for (let i = 0; i < boat.size; i++) {
@@ -145,7 +148,7 @@ const SingleRoomBattleship = () => {
     event.preventDefault();
     const boat = event.dataTransfer.getData("boat");
 
-    if (boat !== undefined) {
+    if (boat) {
       placeBoatOnBoard(boat, rowIndex, colIndex);
     }
   };
@@ -189,6 +192,10 @@ const SingleRoomBattleship = () => {
                   className="battleship-cell"
                   onDrop={(event) => handleDrop(event, rowIndex, colIndex)}
                   onDragOver={handleDragOver}
+                  draggable={cell && cell.placed}
+                  onDragStart={(event) =>
+                    cell && cell.placed && handleDragStart(event, cell)
+                  }
                   style={{
                     backgroundColor:
                       cell && cell.size
