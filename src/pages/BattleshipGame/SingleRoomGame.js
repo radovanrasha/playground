@@ -63,6 +63,7 @@ const SingleRoomBattleship = () => {
 
   const [myBoats, setMyBoats] = useState(initialBoats);
   const [rerender, setReRender] = useState(false);
+  const [allBoatsPlaced, setAllBoatsPlaced] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -186,6 +187,10 @@ const SingleRoomBattleship = () => {
 
     setBoard(newBoard);
     setMyBoats(updatedBoats);
+
+    const allPlaced = updatedBoats.every((boat) => boat.placed);
+
+    setAllBoatsPlaced(allPlaced);
   };
 
   const handleDrop = (event, rowIndex, colIndex) => {
@@ -208,19 +213,57 @@ const SingleRoomBattleship = () => {
         .map(() => Array(10).fill())
     );
     setMyBoats(initialBoats);
+    setAllBoatsPlaced(false);
   };
 
   return (
     <div className="battleship-online-container">
-      <div>
+      <div className="battleship-buttons-row">
         <button onClick={restartBoard} className="ready-battleship-button">
           <span>Restart board</span>
         </button>
-        <button className="ready-battleship-button">
-          <span>I'm ready</span>
-        </button>
+        {allBoatsPlaced && (
+          <button className="ready-battleship-button">
+            <span>I'm ready</span>
+          </button>
+        )}
       </div>
-      <label className="boats-title">Boats:</label>
+      <div className="battleship-boards">
+        <div className="battleship-board">
+          {board.map((row, rowIndex) =>
+            row.map((cell, colIndex) => {
+              return (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`battleship-cell ${
+                    cell && cell.size ? "cell-with-boat" : "cell-without-boat"
+                  }`}
+                  onDrop={(event) => handleDrop(event, rowIndex, colIndex)}
+                  onDragOver={handleDragOver}
+                  draggable={cell && cell.placed}
+                  onDragStart={(event) =>
+                    cell && cell.placed && handleDragStart(event, cell)
+                  }
+                  onClick={() => handleCellClick(cell)}
+                >
+                  {/* {cell?.id} */}
+                </div>
+              );
+            })
+          )}
+        </div>
+        {/* <div className="battleship-board">
+          {opponentBoard.map((row, rowIndex) =>
+            row.map((cell, colIndex) => (
+              <div key={`${rowIndex}-${colIndex}`} className="battleship-cell">
+                {cell}
+              </div>
+            ))
+          )}
+        </div> */}
+      </div>
+
+      {!allBoatsPlaced && <label className="boats-title">Boats:</label>}
       <div className="boats-box">
         {myBoats.map((item, index) => {
           return (
@@ -230,57 +273,13 @@ const SingleRoomBattleship = () => {
                 draggable
                 onDragStart={(event) => handleDragStart(event, item)}
                 onClick={() => handleSelectBoat(item, index)}
-                style={{
-                  width: item.position === "h" ? `${item.size * 50}px` : "50px",
-                  height:
-                    item.position === "v" ? `${item.size * 50}px` : "50px",
-                  border: "1px solid grey",
-                  backgroundColor: "rgb(82, 82, 185)",
-                  marginBottom: "5px",
-                }}
+                className={`${
+                  item.position === "h" ? "horizontal-boat" : "vertical-boat"
+                } ${"boat-size-" + item.size}`}
               ></div>
             )
           );
         })}
-      </div>
-
-      <div className="battleship-boards">
-        <div className="battleship-board">
-          {board.map((row, rowIndex) =>
-            row.map((cell, colIndex) => {
-              return (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className="battleship-cell"
-                  onDrop={(event) => handleDrop(event, rowIndex, colIndex)}
-                  onDragOver={handleDragOver}
-                  draggable={cell && cell.placed}
-                  onDragStart={(event) =>
-                    cell && cell.placed && handleDragStart(event, cell)
-                  }
-                  onClick={() => handleCellClick(cell)}
-                  style={{
-                    backgroundColor:
-                      cell && cell.size
-                        ? "rgb(82, 82, 185)"
-                        : "rgb(53, 53, 129)",
-                  }}
-                >
-                  {/* {cell?.id} */}
-                </div>
-              );
-            })
-          )}
-        </div>
-        <div className="battleship-board">
-          {opponentBoard.map((row, rowIndex) =>
-            row.map((cell, colIndex) => (
-              <div key={`${rowIndex}-${colIndex}`} className="battleship-cell">
-                {cell}
-              </div>
-            ))
-          )}
-        </div>
       </div>
     </div>
   );

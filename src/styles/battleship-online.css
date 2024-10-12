@@ -1,7 +1,15 @@
 .battleship-online-container {
   height: 80vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.battleship-buttons-row {
+  width: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -17,8 +25,8 @@
 
 .battleship-board {
   display: grid;
-  grid-template-columns: repeat(10, 50px);
-  grid-template-rows: repeat(10, 50px);
+  grid-template-columns: repeat(10, 30px);
+  grid-template-rows: repeat(10, 30px);
 }
 
 .battleship-cell {
@@ -28,12 +36,88 @@
 
 .boats-box {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   margin: 10px;
   gap: 10px;
 }
 
 .ready-battleship-button {
-  width: 200px;
-  height: 50px;
-  margin: 15px;
+  width: 100px;
+  height: 30px;
+  margin: 10px;
 }
+
+.cell-with-boat {
+  background-color: rgb(82, 82, 185);
+}
+
+.cell-without-boat {
+  background-color: rgb(53, 53, 129);
+}
+
+.horizontal-boat {
+  border: 1px solid grey;
+  background-color: rgb(82, 82, 185);
+  margin-bottom: 5px;
+}
+
+.vertical-boat {
+  border: 1px solid grey;
+  background-color: rgb(82, 82, 185);
+  margin-bottom: 5px;
+}
+
+.boat-size-2.horizontal-boat {
+  width: 60px;
+  height: 30px;
+}
+
+.boat-size-2.vertical-boat {
+  width: 30px;
+  height: 60px;
+}
+
+.boat-size-3.horizontal-boat {
+  width: 90px;
+  height: 30px;
+}
+
+.boat-size-3.vertical-boat {
+  width: 30px;
+  height: 90px;
+}
+
+.boat-size-4.horizontal-boat {
+  width: 120px;
+  height: 30px;
+}
+
+.boat-size-4.vertical-boat {
+  width: 30px;
+  height: 120px;
+}
+
+.boat-size-5.horizontal-boat {
+  width: 150px;
+  height: 30px;
+}
+
+.boat-size-5.vertical-boat {
+  width: 30px;
+  height: 150px;
+}
+
+/* @media (max-width: 1200px) {
+  .battleship-online-container {
+    width: 70%;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .battleship-online-container {
+    width: 30%;
+    font-size: 20px;
+  }
+} */
