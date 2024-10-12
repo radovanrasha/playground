@@ -111,11 +111,38 @@ const SingleRoomBattleship = () => {
   const placeBoatOnBoard = (boatData, rowIndex, colIndex) => {
     const newBoard = board.map((row) => row.slice());
     const boat = JSON.parse(boatData);
+    let checkFields = false; //check if fields are already occupied by other boat
 
     if (
       (boat.position === "h" && colIndex + boat.size > 10) ||
       (boat.position === "v" && rowIndex + boat.size > 10)
     ) {
+      return;
+    }
+
+    for (let i = 0; i < boat.size; i++) {
+      if (boat.position === "h") {
+        if (
+          newBoard[rowIndex][colIndex + i] &&
+          newBoard[rowIndex][colIndex + i].id !== undefined &&
+          newBoard[rowIndex][colIndex + i].id !== null &&
+          newBoard[rowIndex][colIndex + i].id !== boat.id
+        ) {
+          checkFields = true;
+        }
+      } else {
+        if (
+          newBoard[rowIndex + i][colIndex] &&
+          newBoard[rowIndex + i][colIndex].id !== undefined &&
+          newBoard[rowIndex + i][colIndex].id !== null &&
+          newBoard[rowIndex + i][colIndex].id !== boat.id
+        ) {
+          checkFields = true;
+        }
+      }
+    }
+
+    if (checkFields) {
       return;
     }
 
