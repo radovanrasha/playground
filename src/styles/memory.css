@@ -100,6 +100,7 @@
 
 .memory-type-link {
   text-decoration: none !important;
+  margin-bottom: 10px;
 }
 
 .memory-type-button:hover span {

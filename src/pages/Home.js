@@ -9,6 +9,11 @@ const Home = () => {
           <span>Memory game</span>
         </button>
       </Link>
+      <Link to="/battleship" className="memory-type-link">
+        <button className="memory-type-button">
+          <span>Battleship game</span>
+        </button>
+      </Link>
     </div>
   );
 };

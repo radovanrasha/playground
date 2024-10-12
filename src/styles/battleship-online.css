@@ -1,0 +1,23 @@
+.battleship-online-container {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.battleship-cell {
+  background-color: rgb(53, 53, 129);
+  border: 1px solid rgb(116, 116, 115);
+}
+
+.battleship-board {
+  display: grid;
+  grid-template-columns: repeat(10, 50px);
+  grid-template-rows: repeat(10, 50px);
+}
+
+.battleship-boards {
+  display: flex;
+  gap: 70px;
+}

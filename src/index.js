@@ -9,6 +9,7 @@ import "./styles/secondary.css";
 import "./styles/memory.css";
 import "./styles/memory-online.css";
 import "./styles/home.css";
+import "./styles/battleship-online.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

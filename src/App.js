@@ -7,9 +7,12 @@ import Footer from "./components/Footer";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import Memory from "./pages/MemoryGame/Memory";
+import Battleship from "./pages/BattleshipGame/Battleship";
 import MemorySoloGame from "./pages/MemoryGame/MemorySoloGame";
 import MemoryOnlineHome from "./pages/OnlineMemoryGame/Home";
 import SingleRoom from "./pages/OnlineMemoryGame/SingleRoomGame";
+import BattleshipOnlineHome from "./pages/BattleshipGame/BattleshipOnlineHome";
+import SingleRoomBattleship from "./pages/BattleshipGame/SingleRoomGame";
 
 function App() {
   return (
@@ -21,6 +24,18 @@ function App() {
             <Routes>
               <Route path="/" element={<Home></Home>}></Route>
               <Route path="/memory" element={<Memory></Memory>}></Route>
+              <Route
+                path="/battleship"
+                element={<Battleship></Battleship>}
+              ></Route>
+              <Route
+                path="/battleship-multiplayer"
+                element={<BattleshipOnlineHome></BattleshipOnlineHome>}
+              ></Route>
+              <Route
+                path="/battleship-multiplayer/:id"
+                element={<SingleRoomBattleship></SingleRoomBattleship>}
+              ></Route>
               <Route
                 path="/memory-sologame"
                 element={<MemorySoloGame></MemorySoloGame>}

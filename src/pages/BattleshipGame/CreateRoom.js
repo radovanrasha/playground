@@ -15,8 +15,8 @@ const CreateRoom = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("roomCreated", (data) => {
-        navigate(`/memory-multiplayer/${data.roomId}`);
+      socket.on("roomCreatedBattleship", (data) => {
+        navigate(`/battleship-multiplayer/${data.roomId}`);
       });
     }
   }, [socket]);
@@ -36,7 +36,7 @@ const CreateRoom = () => {
   const submitForm = (e) => {
     e.preventDefault();
 
-    socket.emit("createRoom", data);
+    socket.emit("createRoomBattleship", data);
 
     localStorage.setItem("player", "playerOne");
   };

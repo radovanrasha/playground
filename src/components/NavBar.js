@@ -27,6 +27,9 @@ export default function () {
           <CustomLink setMenuActive={setMenuActive} to="/memory">
             Memory Game
           </CustomLink>
+          <CustomLink setMenuActive={setMenuActive} to="/battleship">
+            Battleship Game
+          </CustomLink>
           <CustomLink setMenuActive={setMenuActive} to="/about">
             About me
           </CustomLink>
