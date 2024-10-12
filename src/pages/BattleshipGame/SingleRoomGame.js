@@ -5,16 +5,7 @@ import { useSocket } from "../../SocketContext";
 const SingleRoomBattleship = () => {
   const { id } = useParams();
   const socket = useSocket();
-  const [board, setBoard] = useState(
-    Array(10)
-      .fill(null)
-      .map(() => Array(10).fill())
-  );
-  const opponentBoard = Array(10)
-    .fill(null)
-    .map(() => Array(10).fill());
-
-  const [myBoats, setMyBoats] = useState([
+  const initialBoats = [
     {
       id: 0,
       size: 2,
@@ -60,7 +51,17 @@ const SingleRoomBattleship = () => {
       rowIndex: null,
       colIndex: null,
     },
-  ]);
+  ];
+  const [board, setBoard] = useState(
+    Array(10)
+      .fill(null)
+      .map(() => Array(10).fill())
+  );
+  const opponentBoard = Array(10)
+    .fill(null)
+    .map(() => Array(10).fill());
+
+  const [myBoats, setMyBoats] = useState(initialBoats);
   const [rerender, setReRender] = useState(false);
 
   useEffect(() => {
@@ -200,8 +201,26 @@ const SingleRoomBattleship = () => {
     event.preventDefault();
   };
 
+  const restartBoard = () => {
+    setBoard(
+      Array(10)
+        .fill(null)
+        .map(() => Array(10).fill())
+    );
+    setMyBoats(initialBoats);
+  };
+
   return (
     <div className="battleship-online-container">
+      <div>
+        <button onClick={restartBoard} className="ready-battleship-button">
+          <span>Restart board</span>
+        </button>
+        <button className="ready-battleship-button">
+          <span>I'm ready</span>
+        </button>
+      </div>
+      <label className="boats-title">Boats:</label>
       <div className="boats-box">
         {myBoats.map((item, index) => {
           return (
@@ -263,9 +282,6 @@ const SingleRoomBattleship = () => {
           )}
         </div>
       </div>
-      <button className="ready-battleship-button">
-        <span>I'm ready</span>
-      </button>
     </div>
   );
 };

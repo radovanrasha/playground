@@ -6,6 +6,10 @@
   align-items: center;
 }
 
+.boats-title {
+  color: var(--text-color);
+}
+
 .battleship-boards {
   display: flex;
   gap: 70px;
@@ -20,4 +24,16 @@
 .battleship-cell {
   background-color: rgb(53, 53, 129);
   border: 1px solid rgb(116, 116, 115);
+}
+
+.boats-box {
+  display: flex;
+  margin: 10px;
+  gap: 10px;
+}
+
+.ready-battleship-button {
+  width: 200px;
+  height: 50px;
+  margin: 15px;
 }
