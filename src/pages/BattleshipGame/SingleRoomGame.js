@@ -79,6 +79,20 @@ const SingleRoomBattleship = () => {
     }
   }, [socket]);
 
+  const handleCellClick = (cell) => {
+    if (!cell || !cell.placed) return;
+    const boat = myBoats.find((boat) => boat.id === cell.id);
+
+    const newPosition = boat.position === "h" ? "v" : "h";
+    const tempBoat = { ...boat, position: newPosition };
+
+    placeBoatOnBoard(
+      JSON.stringify(tempBoat),
+      tempBoat.rowIndex,
+      tempBoat.colIndex
+    );
+  };
+
   const handleSelectBoat = (item, index) => {
     let boatsTemp = [...myBoats];
     boatsTemp[index] = { ...item, position: item.position === "h" ? "v" : "h" };
@@ -95,11 +109,11 @@ const SingleRoomBattleship = () => {
     const newBoard = board.map((row) => row.slice());
 
     if (boat.placed && boat.rowIndex !== null && boat.colIndex !== null) {
-      for (let i = 0; i < boat.size; i++) {
-        if (boat.position === "h") {
-          newBoard[boat.rowIndex][boat.colIndex + i] = undefined;
-        } else {
-          newBoard[boat.rowIndex + i][boat.colIndex] = undefined;
+      for (let i = 0; i < newBoard.length; i++) {
+        for (let j = 0; j < newBoard[i].length; j++) {
+          if (newBoard[i][j] && newBoard[i][j].id === boat.id) {
+            newBoard[i][j] = undefined;
+          }
         }
       }
     }
@@ -225,6 +239,7 @@ const SingleRoomBattleship = () => {
                   onDragStart={(event) =>
                     cell && cell.placed && handleDragStart(event, cell)
                   }
+                  onClick={() => handleCellClick(cell)}
                   style={{
                     backgroundColor:
                       cell && cell.size
@@ -248,7 +263,9 @@ const SingleRoomBattleship = () => {
           )}
         </div>
       </div>
-      <button>Start game</button>
+      <button className="ready-battleship-button">
+        <span>I'm ready</span>
+      </button>
     </div>
   );
 };
