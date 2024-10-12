@@ -6,9 +6,9 @@
   align-items: center;
 }
 
-.battleship-cell {
-  background-color: rgb(53, 53, 129);
-  border: 1px solid rgb(116, 116, 115);
+.battleship-boards {
+  display: flex;
+  gap: 70px;
 }
 
 .battleship-board {
@@ -17,7 +17,7 @@
   grid-template-rows: repeat(10, 50px);
 }
 
-.battleship-boards {
-  display: flex;
-  gap: 70px;
+.battleship-cell {
+  background-color: rgb(53, 53, 129);
+  border: 1px solid rgb(116, 116, 115);
 }

@@ -89,7 +89,6 @@ const SingleRoomBattleship = () => {
 
   const handleDragStart = (event, boat) => {
     event.dataTransfer.setData("boat", JSON.stringify(boat));
-    removeBoatFromBoard(boat);
   };
 
   const removeBoatFromBoard = (boat) => {
@@ -98,19 +97,20 @@ const SingleRoomBattleship = () => {
     if (boat.placed && boat.rowIndex !== null && boat.colIndex !== null) {
       for (let i = 0; i < boat.size; i++) {
         if (boat.position === "h") {
-          newBoard[boat.rowIndex][boat.colIndex + i] = null;
+          newBoard[boat.rowIndex][boat.colIndex + i] = undefined;
         } else {
-          newBoard[boat.rowIndex + i][boat.colIndex] = null;
+          newBoard[boat.rowIndex + i][boat.colIndex] = undefined;
         }
       }
     }
 
     setBoard(newBoard);
+    return newBoard;
   };
 
   const placeBoatOnBoard = (boatData, rowIndex, colIndex) => {
-    const newBoard = board.map((row) => row.slice());
     const boat = JSON.parse(boatData);
+    const checkBoard = board;
     let checkFields = false; //check if fields are already occupied by other boat
 
     if (
@@ -123,19 +123,19 @@ const SingleRoomBattleship = () => {
     for (let i = 0; i < boat.size; i++) {
       if (boat.position === "h") {
         if (
-          newBoard[rowIndex][colIndex + i] &&
-          newBoard[rowIndex][colIndex + i].id !== undefined &&
-          newBoard[rowIndex][colIndex + i].id !== null &&
-          newBoard[rowIndex][colIndex + i].id !== boat.id
+          checkBoard[rowIndex][colIndex + i] &&
+          checkBoard[rowIndex][colIndex + i].id !== undefined &&
+          checkBoard[rowIndex][colIndex + i].id !== null &&
+          checkBoard[rowIndex][colIndex + i].id !== boat.id
         ) {
           checkFields = true;
         }
       } else {
         if (
-          newBoard[rowIndex + i][colIndex] &&
-          newBoard[rowIndex + i][colIndex].id !== undefined &&
-          newBoard[rowIndex + i][colIndex].id !== null &&
-          newBoard[rowIndex + i][colIndex].id !== boat.id
+          checkBoard[rowIndex + i][colIndex] &&
+          checkBoard[rowIndex + i][colIndex].id !== undefined &&
+          checkBoard[rowIndex + i][colIndex].id !== null &&
+          checkBoard[rowIndex + i][colIndex].id !== boat.id
         ) {
           checkFields = true;
         }
@@ -145,6 +145,8 @@ const SingleRoomBattleship = () => {
     if (checkFields) {
       return;
     }
+
+    const newBoard = removeBoatFromBoard(boat);
 
     for (let i = 0; i < boat.size; i++) {
       if (boat.position === "h") {
@@ -186,7 +188,7 @@ const SingleRoomBattleship = () => {
 
   return (
     <div className="battleship-online-container">
-      <div>
+      <div className="boats-box">
         {myBoats.map((item, index) => {
           return (
             !item.placed && (
