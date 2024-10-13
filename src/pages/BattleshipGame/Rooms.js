@@ -12,7 +12,7 @@ const Rooms = ({ rooms, setRooms }) => {
 
     socket.emit("joinRoomBattleship", id, "playerTwo");
 
-    navigate(`/memory-multiplayer/${id}`);
+    navigate(`/battleship-multiplayer/${id}`);
   };
 
   useEffect(() => {

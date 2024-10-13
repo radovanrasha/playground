@@ -14,6 +14,13 @@
   align-items: center;
 }
 
+.battleship-red-info {
+  background-color: rgba(223, 47, 47, 0.89);
+  padding: 10px;
+  border-radius: 5px;
+  color: var(--text-color);
+}
+
 .boats-title {
   color: var(--text-color);
 }

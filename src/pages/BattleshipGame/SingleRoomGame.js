@@ -64,10 +64,24 @@ const SingleRoomBattleship = () => {
   const [myBoats, setMyBoats] = useState(initialBoats);
   const [rerender, setReRender] = useState(false);
   const [allBoatsPlaced, setAllBoatsPlaced] = useState(false);
+  const [statusOfGame, setStatusOfGame] = useState("initialized");
+  const [player, setPlayer] = useState(localStorage.getItem("player"));
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     if (socket) {
       socket.emit("joinRoomBattleship", id, localStorage.getItem("player"));
+
+      socket.on("gameInfoBattleship", (data) => {
+        // console.log(data?.game?.status);
+        if (data.game?.nextTurn !== player) {
+          setDisabled(true);
+        } else {
+          setDisabled(false);
+        }
+
+        setStatusOfGame(data?.game?.status);
+      });
 
       const handleUnload = () => {
         socket.emit("gameCanceledBattleship", id);
@@ -216,17 +230,34 @@ const SingleRoomBattleship = () => {
     setAllBoatsPlaced(false);
   };
 
+  const handleReadyButton = () => {
+    socket.emit("playerReadyBattleship", id, localStorage.getItem("player"));
+  };
+
   return (
     <div className="battleship-online-container">
+      {statusOfGame === "waiting" && !allBoatsPlaced && (
+        <label className="battleship-red-info">
+          Please put all boats on the board
+        </label>
+      )}
       <div className="battleship-buttons-row">
-        <button onClick={restartBoard} className="ready-battleship-button">
-          <span>Restart board</span>
-        </button>
-        {allBoatsPlaced && (
-          <button className="ready-battleship-button">
-            <span>I'm ready</span>
+        {(statusOfGame === "initialized" || statusOfGame === "waiting") && (
+          <button onClick={restartBoard} className="ready-battleship-button">
+            <span>Restart board</span>
           </button>
         )}
+        {allBoatsPlaced &&
+          (statusOfGame === "initialized" || statusOfGame === "waiting") && (
+            <button
+              onClick={() => {
+                handleReadyButton();
+              }}
+              className="ready-battleship-button"
+            >
+              <span>I'm ready</span>
+            </button>
+          )}
       </div>
       <div className="battleship-boards">
         <div className="battleship-board">
@@ -252,15 +283,20 @@ const SingleRoomBattleship = () => {
             })
           )}
         </div>
-        {/* <div className="battleship-board">
-          {opponentBoard.map((row, rowIndex) =>
-            row.map((cell, colIndex) => (
-              <div key={`${rowIndex}-${colIndex}`} className="battleship-cell">
-                {cell}
-              </div>
-            ))
-          )}
-        </div> */}
+        {statusOfGame !== "waiting" && statusOfGame !== "initialized" && (
+          <div className="battleship-board">
+            {opponentBoard.map((row, rowIndex) =>
+              row.map((cell, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className="battleship-cell"
+                >
+                  {cell}
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {!allBoatsPlaced && <label className="boats-title">Boats:</label>}
@@ -281,6 +317,12 @@ const SingleRoomBattleship = () => {
           );
         })}
       </div>
+      {statusOfGame === "initialized" && (
+        <div className="overlay-waiting">
+          <div className="loader"></div>
+          <div className="loader-text">Waiting for second player...</div>
+        </div>
+      )}
     </div>
   );
 };
