@@ -52,21 +52,18 @@ const SingleRoomBattleship = () => {
       colIndex: null,
     },
   ];
-  const [board, setBoard] = useState(
-    Array(10)
-      .fill(null)
-      .map(() => Array(10).fill())
-  );
-  const opponentBoard = Array(10)
-    .fill(null)
-    .map(() => Array(10).fill());
+  const [board, setBoard] = useState([]);
+
+  const [opponentBoard, setOpponentBoard] = useState([]);
 
   const [myBoats, setMyBoats] = useState(initialBoats);
   const [rerender, setReRender] = useState(false);
   const [allBoatsPlaced, setAllBoatsPlaced] = useState(false);
   const [statusOfGame, setStatusOfGame] = useState("initialized");
   const [player, setPlayer] = useState(localStorage.getItem("player"));
-  const [disabled, setDisabled] = useState(false);
+  const [nextTurn, setNextTurn] = useState(false);
+  const [pointerNone, setPointerNone] = useState(false);
+  const [showActionButtons, setShowActionButtons] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -74,10 +71,40 @@ const SingleRoomBattleship = () => {
 
       socket.on("gameInfoBattleship", (data) => {
         // console.log(data?.game?.status);
-        if (data.game?.nextTurn !== player) {
-          setDisabled(true);
-        } else {
-          setDisabled(false);
+        setNextTurn(data.game.nextTurn);
+
+        if (player === "playerOne") {
+          if (data.game.firstPlayerReady) {
+            setShowActionButtons(false);
+            setAllBoatsPlaced(true);
+            setPointerNone(true);
+          } else {
+            setShowActionButtons(true);
+            setAllBoatsPlaced(false);
+            setPointerNone(false);
+          }
+
+          if (data.game.firstPlayerBoard) {
+            setBoard(data.game.firstPlayerBoard);
+            setOpponentBoard(data.game.secondPlayerBoardRevealed);
+            setReRender(!rerender);
+          }
+        } else if (player === "playerTwo") {
+          if (data.game.secondPlayerReady) {
+            setShowActionButtons(false);
+            setAllBoatsPlaced(true);
+            setPointerNone(true);
+          } else {
+            setShowActionButtons(true);
+            setAllBoatsPlaced(false);
+            setPointerNone(false);
+          }
+
+          if (data.game.secondPlayerBoard) {
+            setBoard(data.game.secondPlayerBoard);
+            setOpponentBoard(data.game.firstPlayerBoardRevealed);
+            setReRender(!rerender);
+          }
         }
 
         setStatusOfGame(data?.game?.status);
@@ -231,36 +258,56 @@ const SingleRoomBattleship = () => {
   };
 
   const handleReadyButton = () => {
-    socket.emit("playerReadyBattleship", id, localStorage.getItem("player"));
+    socket.emit(
+      "playerReadyBattleship",
+      id,
+      localStorage.getItem("player"),
+      board
+    );
+  };
+
+  const handlePlayerClickOnBoard = (rowIndex, colIndex) => {
+    socket.emit("clickOnBoardBattleship", id, player, rowIndex, colIndex);
   };
 
   return (
     <div className="battleship-online-container">
+      {statusOfGame === "ongoing" && (
+        <label className="battleship-blue-info">
+          {nextTurn === player ? "Your turn" : "Opponent turn"}
+        </label>
+      )}
       {statusOfGame === "waiting" && !allBoatsPlaced && (
         <label className="battleship-red-info">
           Please put all boats on the board
         </label>
       )}
+      {statusOfGame === "waiting" && allBoatsPlaced && (
+        <label className="battleship-red-info">
+          Waiting for other player to place their boats
+        </label>
+      )}
       <div className="battleship-buttons-row">
-        {(statusOfGame === "initialized" || statusOfGame === "waiting") && (
+        {showActionButtons && (
           <button onClick={restartBoard} className="ready-battleship-button">
             <span>Restart board</span>
           </button>
         )}
-        {allBoatsPlaced &&
-          (statusOfGame === "initialized" || statusOfGame === "waiting") && (
-            <button
-              onClick={() => {
-                handleReadyButton();
-              }}
-              className="ready-battleship-button"
-            >
-              <span>I'm ready</span>
-            </button>
-          )}
+        {showActionButtons && (
+          <button
+            onClick={() => {
+              handleReadyButton();
+            }}
+            className="ready-battleship-button"
+          >
+            <span>I'm ready</span>
+          </button>
+        )}
       </div>
       <div className="battleship-boards">
-        <div className="battleship-board">
+        <div
+          className={`battleship-board ${pointerNone ? "pointer-none" : ""}`}
+        >
           {board.map((row, rowIndex) =>
             row.map((cell, colIndex) => {
               return (
@@ -289,7 +336,12 @@ const SingleRoomBattleship = () => {
               row.map((cell, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className="battleship-cell"
+                  className={`battleship-cell ${
+                    player !== nextTurn ? "pointer-none" : ""
+                  }`}
+                  onClick={() => {
+                    handlePlayerClickOnBoard(rowIndex, colIndex);
+                  }}
                 >
                   {cell}
                 </div>
@@ -301,21 +353,22 @@ const SingleRoomBattleship = () => {
 
       {!allBoatsPlaced && <label className="boats-title">Boats:</label>}
       <div className="boats-box">
-        {myBoats.map((item, index) => {
-          return (
-            !item.placed && (
-              <div
-                key={index}
-                draggable
-                onDragStart={(event) => handleDragStart(event, item)}
-                onClick={() => handleSelectBoat(item, index)}
-                className={`${
-                  item.position === "h" ? "horizontal-boat" : "vertical-boat"
-                } ${"boat-size-" + item.size}`}
-              ></div>
-            )
-          );
-        })}
+        {!allBoatsPlaced &&
+          myBoats.map((item, index) => {
+            return (
+              !item.placed && (
+                <div
+                  key={index}
+                  draggable
+                  onDragStart={(event) => handleDragStart(event, item)}
+                  onClick={() => handleSelectBoat(item, index)}
+                  className={`${
+                    item.position === "h" ? "horizontal-boat" : "vertical-boat"
+                  } ${"boat-size-" + item.size}`}
+                ></div>
+              )
+            );
+          })}
       </div>
       {statusOfGame === "initialized" && (
         <div className="overlay-waiting">

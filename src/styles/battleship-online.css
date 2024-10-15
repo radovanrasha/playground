@@ -19,6 +19,14 @@
   padding: 10px;
   border-radius: 5px;
   color: var(--text-color);
+  margin-bottom: 10px;
+}
+.battleship-blue-info {
+  background-color: rgba(0, 0, 255, 0.801);
+  padding: 10px;
+  border-radius: 5px;
+  color: var(--text-color);
+  margin-bottom: 10px;
 }
 
 .boats-title {
@@ -31,6 +39,10 @@
   gap: 10px;
 }
 
+.pointer-none {
+  pointer-events: none;
+}
+
 .battleship-board {
   display: grid;
   grid-template-columns: repeat(10, 30px);
@@ -40,6 +52,9 @@
 .battleship-cell {
   background-color: rgb(53, 53, 129);
   border: 1px solid rgb(116, 116, 115);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .boats-box {
