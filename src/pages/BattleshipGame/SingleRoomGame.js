@@ -103,7 +103,12 @@ const SingleRoomBattleship = () => {
             setPointerNone(false);
           }
 
-          if (data.game.firstPlayerBoard) {
+          if (
+            data.game.firstPlayerBoard &&
+            ((data.game.firstPlayerReady && !data.game.secondPlayerReady) ||
+              (!data.game.firstPlayerReady && !data.game.secondPlayerReady) ||
+              (data.game.firstPlayerReady && data.game.secondPlayerReady))
+          ) {
             setBoard(data.game.firstPlayerBoard);
             setPlayerOneBoardRevealed(data.game.firstPlayerBoardRevealed);
             setOpponentBoard(data.game.secondPlayerBoardRevealed);
@@ -120,7 +125,12 @@ const SingleRoomBattleship = () => {
             setPointerNone(false);
           }
 
-          if (data.game.secondPlayerBoard) {
+          if (
+            data.game.secondPlayerBoard &&
+            ((data.game.secondPlayerReady && !data.game.firstPlayerReady) ||
+              (!data.game.secondPlayerReady && !data.game.firstPlayerReady) ||
+              (data.game.firstPlayerReady && data.game.secondPlayerReady))
+          ) {
             setBoard(data.game.secondPlayerBoard);
             setPlayerTwoBoardRevealed(data.game.secondPlayerBoardRevealed);
             setOpponentBoard(data.game.firstPlayerBoardRevealed);
