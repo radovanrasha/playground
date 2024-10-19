@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ReactConfetti from "react-confetti";
+import { useWindowSize } from "react-use";
 import { useSocket } from "../../SocketContext";
+import { Modal } from "antd";
 
 const SingleRoomBattleship = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { width, height } = useWindowSize();
   const socket = useSocket();
   const initialBoats = [
     {
@@ -64,6 +70,9 @@ const SingleRoomBattleship = () => {
   const [nextTurn, setNextTurn] = useState(false);
   const [pointerNone, setPointerNone] = useState(false);
   const [showActionButtons, setShowActionButtons] = useState(false);
+  const [showFinishedGameModal, setShowFinishedGameModal] = useState(false);
+  const [playerOneScore, setPlayerOneScore] = useState(0);
+  const [playerTwoScore, setPlayerTwoScore] = useState(0);
 
   useEffect(() => {
     if (socket) {
@@ -72,6 +81,14 @@ const SingleRoomBattleship = () => {
       socket.on("gameInfoBattleship", (data) => {
         // console.log(data?.game?.status);
         setNextTurn(data.game.nextTurn);
+
+        if (data.game.status === "finished") {
+          setShowFinishedGameModal(true);
+        }
+
+        setPlayerTwoScore(data.game.secondPlayerScore);
+
+        setPlayerOneScore(data.game.firstPlayerScore);
 
         if (player === "playerOne") {
           if (data.game.firstPlayerReady) {
@@ -293,7 +310,7 @@ const SingleRoomBattleship = () => {
             <span>Restart board</span>
           </button>
         )}
-        {showActionButtons && (
+        {showActionButtons && allBoatsPlaced && (
           <button
             onClick={() => {
               handleReadyButton();
@@ -375,6 +392,34 @@ const SingleRoomBattleship = () => {
           <div className="loader"></div>
           <div className="loader-text">Waiting for second player...</div>
         </div>
+      )}
+
+      <Modal
+        footer={[]}
+        onCancel={() => {
+          setShowFinishedGameModal(false);
+          navigate(`/battleship-multiplayer`);
+        }}
+        open={showFinishedGameModal}
+      >
+        <div>Game finished!</div>
+        <p>
+          {playerOneScore > playerTwoScore
+            ? `Player one won ${playerOneScore} : ${playerTwoScore}`
+            : playerTwoScore > playerOneScore
+            ? `Player two won ${playerTwoScore} : ${playerOneScore}`
+            : `The game ended tie ${playerOneScore} : ${playerTwoScore}`}
+        </p>
+      </Modal>
+
+      {showFinishedGameModal && (
+        <ReactConfetti
+          colors={["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]}
+          recycle={false}
+          numberOfPieces={400}
+          width={width}
+          height={height}
+        />
       )}
     </div>
   );
