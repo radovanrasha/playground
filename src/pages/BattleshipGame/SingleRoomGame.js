@@ -59,6 +59,8 @@ const SingleRoomBattleship = () => {
     },
   ];
   const [board, setBoard] = useState([]);
+  const [playerOneBoardRevealed, setPlayerOneBoardRevealed] = useState([]);
+  const [playerTwoBoardRevealed, setPlayerTwoBoardRevealed] = useState([]);
 
   const [opponentBoard, setOpponentBoard] = useState([]);
 
@@ -103,6 +105,7 @@ const SingleRoomBattleship = () => {
 
           if (data.game.firstPlayerBoard) {
             setBoard(data.game.firstPlayerBoard);
+            setPlayerOneBoardRevealed(data.game.firstPlayerBoardRevealed);
             setOpponentBoard(data.game.secondPlayerBoardRevealed);
             setReRender(!rerender);
           }
@@ -119,6 +122,7 @@ const SingleRoomBattleship = () => {
 
           if (data.game.secondPlayerBoard) {
             setBoard(data.game.secondPlayerBoard);
+            setPlayerTwoBoardRevealed(data.game.secondPlayerBoardRevealed);
             setOpponentBoard(data.game.firstPlayerBoardRevealed);
             setReRender(!rerender);
           }
@@ -341,7 +345,9 @@ const SingleRoomBattleship = () => {
                   }
                   onClick={() => handleCellClick(cell)}
                 >
-                  {/* {cell?.id} */}
+                  {player === "playerOne"
+                    ? playerOneBoardRevealed[rowIndex][colIndex]
+                    : playerTwoBoardRevealed[rowIndex][colIndex]}
                 </div>
               );
             })
