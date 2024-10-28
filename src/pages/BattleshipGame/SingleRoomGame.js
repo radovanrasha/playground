@@ -307,9 +307,9 @@ const SingleRoomBattleship = () => {
   };
 
   const handleTouchStart = (event, boat) => {
+    event.preventDefault();
     setCurrentBoat(boat);
     setTouching(true);
-    event.preventDefault();
   };
 
   const handleTouchMove = (event) => {
