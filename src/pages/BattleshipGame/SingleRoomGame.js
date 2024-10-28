@@ -11,6 +11,11 @@ const SingleRoomBattleship = () => {
   const navigate = useNavigate();
   const { width, height } = useWindowSize();
   const socket = useSocket();
+
+  const [touching, setTouching] = useState(false);
+  const [currentBoat, setCurrentBoat] = useState(null);
+  const [touchCell, setTouchCell] = useState(null);
+
   const initialBoats = [
     {
       id: 0,
@@ -301,6 +306,44 @@ const SingleRoomBattleship = () => {
     socket.emit("clickOnBoardBattleship", id, player, rowIndex, colIndex);
   };
 
+  const handleTouchStart = (event, boat) => {
+    setCurrentBoat(boat);
+    setTouching(true);
+    event.preventDefault();
+  };
+
+  const handleTouchMove = (event) => {
+    if (!touching || !currentBoat) return;
+
+    const touch = event.touches[0];
+    const boardRect = document
+      .querySelector(".battleship-board")
+      .getBoundingClientRect();
+
+    const columnWidth = boardRect.width / 10;
+    const rowHeight = boardRect.height / 10;
+
+    const rowIndex = Math.floor((touch.clientY - boardRect.top) / rowHeight);
+    const colIndex = Math.floor((touch.clientX - boardRect.left) / columnWidth);
+
+    if (rowIndex >= 0 && rowIndex < 10 && colIndex >= 0 && colIndex < 10) {
+      setTouchCell({ rowIndex, colIndex });
+    }
+  };
+
+  const handleTouchEnd = (event) => {
+    if (touchCell && currentBoat) {
+      placeBoatOnBoard(
+        JSON.stringify(currentBoat),
+        touchCell.rowIndex,
+        touchCell.colIndex
+      );
+      setCurrentBoat(null);
+      setTouchCell(null);
+    }
+    setTouching(false);
+  };
+
   return (
     <div className="battleship-online-container">
       {statusOfGame === "ongoing" && (
@@ -338,6 +381,8 @@ const SingleRoomBattleship = () => {
       <div className="battleship-boards">
         <div
           className={`battleship-board ${pointerNone ? "pointer-none" : ""}`}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {board.map((row, rowIndex) =>
             row.map((cell, colIndex) => {
@@ -352,6 +397,9 @@ const SingleRoomBattleship = () => {
                   draggable={cell && cell.placed}
                   onDragStart={(event) =>
                     cell && cell.placed && handleDragStart(event, cell)
+                  }
+                  onTouchStart={(event) =>
+                    cell && cell.placed && handleTouchStart(event, cell)
                   }
                   onClick={() => handleCellClick(cell)}
                 >
@@ -385,7 +433,11 @@ const SingleRoomBattleship = () => {
       </div>
 
       {!allBoatsPlaced && <label className="boats-title">Boats:</label>}
-      <div className="boats-box">
+      <div
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="boats-box"
+      >
         {!allBoatsPlaced &&
           myBoats.map((item, index) => {
             return (
@@ -394,6 +446,7 @@ const SingleRoomBattleship = () => {
                   key={index}
                   draggable
                   onDragStart={(event) => handleDragStart(event, item)}
+                  onTouchStart={(event) => handleTouchStart(event, item)}
                   onClick={() => handleSelectBoat(item, index)}
                   className={`${
                     item.position === "h" ? "horizontal-boat" : "vertical-boat"
