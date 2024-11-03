@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, Radio, Tooltip } from "antd";
+import { Input, Button, Radio, Tooltip, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useSocket } from "../../SocketContext";
@@ -35,6 +35,15 @@ const CreateRoom = () => {
 
   const submitForm = (e) => {
     e.preventDefault();
+
+    if (data.title === "" || !data.title) {
+      notification.error({
+        message: "Room name is required!",
+        duration: 2,
+      });
+
+      return;
+    }
 
     socket.emit("createRoom", data);
 
