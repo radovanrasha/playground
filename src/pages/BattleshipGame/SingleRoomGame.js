@@ -347,7 +347,11 @@ const SingleRoomBattleship = () => {
   return (
     <div className="battleship-online-container">
       {statusOfGame === "ongoing" && (
-        <label className="battleship-blue-info">
+        <label
+          className={`battleship-blue-info ${
+            nextTurn === player ? "your-turn pulse" : "opponent-turn pulse"
+          }`}
+        >
           {nextTurn === player ? "Your turn" : "Opponent turn"}
         </label>
       )}

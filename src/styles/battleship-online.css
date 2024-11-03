@@ -22,11 +22,42 @@
   margin-bottom: 10px;
 }
 .battleship-blue-info {
-  background-color: rgba(0, 0, 255, 0.801);
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 5px;
-  color: var(--text-color);
-  margin-bottom: 10px;
+  color: white;
+  background-color: #007bff;
+  transition: background-color 0.5s ease, transform 0.3s ease;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.battleship-blue-info.scale-up {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+.your-turn {
+  background-color: #242f6d;
+}
+
+.opponent-turn {
+  background-color: #574b4b;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.7);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.7);
+  }
+}
+
+.pulse {
+  animation: pulse 1.2s infinite;
 }
 
 .boats-title {
