@@ -31,18 +31,6 @@
   font-size: 24px;
 }
 
-.leftslide {
-  animation-name: slideInFromLeft;
-  animation-duration: 1s;
-  animation-fill-mode: both;
-}
-
-.rightslide {
-  animation-name: slideInFromRight;
-  animation-duration: 1s;
-  animation-fill-mode: both;
-}
-
 @media (max-width: 900px) {
   .about-row {
     flex-direction: column;

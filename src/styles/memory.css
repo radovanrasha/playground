@@ -101,6 +101,10 @@
 .memory-type-link {
   text-decoration: none !important;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .memory-type-button:hover span {
