@@ -303,6 +303,10 @@ const SingleRoomBattleship = () => {
   };
 
   const handlePlayerClickOnBoard = (rowIndex, colIndex) => {
+    if (opponentBoard[rowIndex][colIndex]) {
+      return;
+    }
+
     socket.emit("clickOnBoardBattleship", id, player, rowIndex, colIndex);
   };
 
