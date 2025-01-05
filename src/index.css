@@ -226,6 +226,13 @@ body {
   margin: 0 10px 0 0;
 }
 
+.game-banner {
+  height: 300px;
+  border-radius: 15px;
+  padding: 0px;
+  margin: 0 0 20px 0;
+}
+
 .footer div {
   margin: 0;
   padding: 0;
@@ -234,4 +241,13 @@ body {
 .footer p {
   margin: 20px 0 0 0;
   padding: 0;
+}
+
+@media (max-width: 900px) {
+  .game-banner {
+    height: 200px;
+    border-radius: 15px;
+    padding: 0px;
+    margin: 0 0 10px 0;
+  }
 }
