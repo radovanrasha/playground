@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import ReactConfetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { useSocket } from "../../SocketContext";
@@ -73,6 +72,7 @@ const SingleRoomBattleship = () => {
   const [rerender, setReRender] = useState(false);
   const [allBoatsPlaced, setAllBoatsPlaced] = useState(false);
   const [statusOfGame, setStatusOfGame] = useState("initialized");
+  const [qrCode, setQrCode] = useState();
   const [player, setPlayer] = useState(localStorage.getItem("player"));
   const [nextTurn, setNextTurn] = useState(false);
   const [pointerNone, setPointerNone] = useState(false);
@@ -80,13 +80,20 @@ const SingleRoomBattleship = () => {
   const [showFinishedGameModal, setShowFinishedGameModal] = useState(false);
   const [playerOneScore, setPlayerOneScore] = useState(0);
   const [playerTwoScore, setPlayerTwoScore] = useState(0);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const queryPlayer = queryParams.get("player");
 
   useEffect(() => {
     if (socket) {
+      if (queryPlayer && queryPlayer !== "") {
+        localStorage.setItem("player", queryPlayer);
+      }
+
       socket.emit("joinRoomBattleship", id, localStorage.getItem("player"));
 
       socket.on("gameInfoBattleship", (data) => {
-        // console.log(data?.game?.status);
+        setQrCode(data?.game?.qrcode);
         setNextTurn(data.game.nextTurn);
 
         if (data.game.status === "finished") {
@@ -467,6 +474,8 @@ const SingleRoomBattleship = () => {
       {statusOfGame === "initialized" && (
         <div className="overlay-waiting">
           <div className="loader"></div>
+          <img src={qrCode}></img>
+          <label>Scan QR Code to join</label>
           <div className="loader-text">Waiting for second player...</div>
         </div>
       )}
