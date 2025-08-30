@@ -1,0 +1,9 @@
+.masked-term {
+  display: flex;
+  gap: 0.5em;
+}
+
+.incorrect-guesses {
+  display: flex;
+  gap: 0.5em;
+}
