@@ -33,7 +33,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.VPS_SSH_HOST }}
           REMOTE_USER: ${{ secrets.VPS_SSH_USER }}
           SOURCE: "./"
-          TARGET: "/home/dev/playground/playground-front"
+          TARGET: "/home/dev/playground/playground-front/source"
           EXCLUDE: "/dist/, /node_modules/"
 
       - name: Run post-deployment commands
@@ -43,6 +43,6 @@ jobs:
           username: ${{ secrets.VPS_SSH_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
-            cd /home/dev/playground/playground-front
+            cd /home/dev/playground/playground-front/source
             npm install --production
             /home/dev/.nvm/versions/node/v20.17.0/bin/pm2 restart playground-frontend
