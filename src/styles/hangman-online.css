@@ -1,0 +1,14 @@
+.masked-term {
+  display: flex;
+  gap: 0.5em;
+}
+
+.incorrect-guesses {
+  display: flex;
+  gap: 0.5em;
+}
+
+.hangman-image {
+  width: 200px;
+  height: 200px;
+}

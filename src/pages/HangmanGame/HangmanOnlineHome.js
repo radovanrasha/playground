@@ -3,7 +3,7 @@ import CreateRoom from "./CreateRoom";
 import Rooms from "./Rooms";
 import { useSocket } from "../../SocketContext";
 
-const BattleshipOnlineHome = () => {
+const HangmanOnlineHome = () => {
   const socket = useSocket();
   const [rooms, setRooms] = useState([]);
   const [typeOfGame, setTypeOfGame] = useState("create-room");
@@ -13,8 +13,8 @@ const BattleshipOnlineHome = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("getFreeRoomsBattleship");
-      socket.on("freeRoomsBattleship", (roomsArr) => {
+      socket.emit("getFreeRoomsHangman");
+      socket.on("freeRoomsHangman", (roomsArr) => {
         setRooms(roomsArr);
       });
     }
@@ -33,7 +33,6 @@ const BattleshipOnlineHome = () => {
           <CreateRoom />
         </div>
       )}
-
       <button
         className="memory-type-button"
         onClick={() =>
@@ -50,4 +49,4 @@ const BattleshipOnlineHome = () => {
   );
 };
 
-export default BattleshipOnlineHome;
+export default HangmanOnlineHome;
