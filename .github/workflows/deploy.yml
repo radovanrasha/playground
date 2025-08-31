@@ -45,4 +45,4 @@ jobs:
           script: |
             cd /home/dev/playground/playground-front
             npm install --production
-            /usr/bin/pm2 restart playground-frontend
+            pm2 restart playground-frontend
