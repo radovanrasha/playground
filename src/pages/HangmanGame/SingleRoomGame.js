@@ -9,7 +9,7 @@ import hangmanPng3 from "./assets/hangman3.png";
 import hangmanPng4 from "./assets/hangman4.png";
 import hangmanPng5 from "./assets/hangman5.png";
 import hangmanPng6 from "./assets/hangman6.png";
-import { Button, Input, notification } from "antd";
+import { Button, Input, Modal, notification } from "antd";
 import Keyboard from "./components/Keyboard";
 
 const SingleRoomHangman = () => {
@@ -35,6 +35,7 @@ const SingleRoomHangman = () => {
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [incorrectGuesses, setIncorrectGuesses] = useState([]);
   const [maskedTerm, setMaskedTerm] = useState([]);
+  const [showGameModal, setShowGameModal] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -42,6 +43,10 @@ const SingleRoomHangman = () => {
 
       socket.on("gameInfoHangman", (data) => {
         setGameData(data);
+
+        if (data.game.status === "finished") {
+          setShowGameModal(true);
+        }
 
         const numOfMissed =
           data?.game?.rounds[data?.game?.rounds.length - 1].missed;
@@ -56,7 +61,8 @@ const SingleRoomHangman = () => {
         );
 
         setIsTermSetter(
-          data?.game?.nextTurn === localStorage.getItem("player")
+          data?.game?.rounds[data?.game?.rounds.length - 1].termSetter ===
+            localStorage.getItem("player")
         );
 
         setIsTermChosen(
@@ -164,7 +170,7 @@ const SingleRoomHangman = () => {
           </div>
         )}
 
-        <img src={hangmanImageShowed}></img>
+        <img className="hangman-image" src={hangmanImageShowed}></img>
 
         {!isTermSetter && isTermChosen && (
           <div className="masked-term">
@@ -199,6 +205,21 @@ const SingleRoomHangman = () => {
           <div className="loader-text">Waiting for second player...</div>
         </div>
       )}
+      <Modal
+        footer={[]}
+        onCancel={() => {
+          setShowGameModal(false);
+          navigate(`/hangman-multiplayer`);
+        }}
+        open={showGameModal}
+      >
+        <div>Game finished!</div>
+        <p>
+          {gameData?.game?.playerOneScore > gameData?.game?.playerTwoScore
+            ? `Player one won ${gameData?.game?.playerOneScore} : ${gameData?.game?.playerTwoScore}`
+            : `Player two won ${gameData?.game?.playerTwoScore} : ${gameData?.game?.playerOneScore}`}
+        </p>
+      </Modal>
     </div>
   );
 };
