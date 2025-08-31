@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -45,4 +45,4 @@ jobs:
           script: |
             cd /home/dev/playground/playground-front
             npm install --production
-            pm2 restart playground-frontend
+            /usr/bin/pm2 restart playground-frontend
