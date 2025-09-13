@@ -43,6 +43,13 @@ const SingleRoomHangman = () => {
 
       socket.on("gameInfoHangman", (data) => {
         setGameData(data);
+        
+        // if (data.showPopupWithSolution) {
+        //   notification.info({
+        //     duration: 1,
+        //     message: `The term was: ${data?.game?.rounds[data?.game?.rounds.length - 2]?.term?.join("")}`,
+        //   });
+        // }
 
         if (data.game.status === "finished") {
           setShowGameModal(true);
@@ -172,7 +179,7 @@ const SingleRoomHangman = () => {
 
         <img className="hangman-image" src={hangmanImageShowed}></img>
 
-        {!isTermSetter && isTermChosen && (
+        {isTermChosen && (
           <div className="masked-term">
             {maskedTerm &&
               maskedTerm.length > 0 &&
