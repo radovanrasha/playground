@@ -5,7 +5,7 @@ import github from "../assets/github.png";
 const Footer = () => {
   return (
     <div className="footer">
-      <p> &copy; 2023 radovanrasha</p>
+      <p>since 2023</p>
       <div>
         <a href="mailto:ivanovicradovan18@gmail.com" target="_blank">
           <img className="footerIcon" src={gmail} alt="Profile" />
