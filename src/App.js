@@ -13,9 +13,10 @@ import MemoryOnlineHome from "./pages/OnlineMemoryGame/Home";
 import SingleRoom from "./pages/OnlineMemoryGame/SingleRoomGame";
 import BattleshipOnlineHome from "./pages/BattleshipGame/BattleshipOnlineHome";
 import SingleRoomBattleship from "./pages/BattleshipGame/SingleRoomGame";
-import Hangman from "./pages/HangmanGame/Hangman";
-import HangmanOnlineHome from "./pages/HangmanGame/HangmanOnlineHome";
-import SingleRoomHangman from "./pages/HangmanGame/SingleRoomGame";
+// Hangman is disabled until the game is finished
+// import Hangman from "./pages/HangmanGame/Hangman";
+// import HangmanOnlineHome from "./pages/HangmanGame/HangmanOnlineHome";
+// import SingleRoomHangman from "./pages/HangmanGame/SingleRoomGame";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                 path="/battleship"
                 element={<Battleship></Battleship>}
               ></Route>
+              {/* Hangman is disabled until the game is finished
               <Route path="/hangman" element={<Hangman></Hangman>}></Route>
               <Route
                 path="/hangman-multiplayer"
@@ -40,6 +42,7 @@ function App() {
                 path="/hangman-multiplayer/:id"
                 element={<SingleRoomHangman></SingleRoomHangman>}
               ></Route>
+              */}
               <Route
                 path="/battleship-multiplayer"
                 element={<BattleshipOnlineHome></BattleshipOnlineHome>}
