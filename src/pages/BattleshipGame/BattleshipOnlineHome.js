@@ -33,20 +33,19 @@ const BattleshipOnlineHome = () => {
           <CreateRoom />
         </div>
       )}
-      {typeOfGame !== "home" && (
-        <button
-          className="memory-type-button"
-          onClick={() =>
-            onChangeTypeOfGame(
-              typeOfGame === "create-room" ? "join-room" : "create-room"
-            )
-          }
-        >
-          <span>
-            {typeOfGame === "create-room" ? "Join room" : "Create room"}
-          </span>
-        </button>
-      )}
+
+      <button
+        className="memory-type-button"
+        onClick={() =>
+          onChangeTypeOfGame(
+            typeOfGame === "create-room" ? "join-room" : "create-room"
+          )
+        }
+      >
+        <span>
+          {typeOfGame === "create-room" ? "Join room" : "Create room"}
+        </span>
+      </button>
     </div>
   );
 };

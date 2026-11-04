@@ -105,13 +105,14 @@ const SingleRoomBattleship = () => {
         setPlayerOneScore(data.game.firstPlayerScore);
 
         if (player === "playerOne") {
+          // when not ready, keep allBoatsPlaced as is: it reflects the local
+          // board, which the opponent's updates must not reset
           if (data.game.firstPlayerReady) {
             setShowActionButtons(false);
             setAllBoatsPlaced(true);
             setPointerNone(true);
           } else {
             setShowActionButtons(true);
-            setAllBoatsPlaced(false);
             setPointerNone(false);
           }
 
@@ -133,7 +134,6 @@ const SingleRoomBattleship = () => {
             setPointerNone(true);
           } else {
             setShowActionButtons(true);
-            setAllBoatsPlaced(false);
             setPointerNone(false);
           }
 
@@ -355,6 +355,32 @@ const SingleRoomBattleship = () => {
     setTouching(false);
   };
 
+  // stern is the first segment, bow the last (right for "h", bottom for "v")
+  const getBoatCellClass = (cell, rowIndex, colIndex) => {
+    if (!cell || !cell.size) return "cell-without-boat";
+
+    const segment =
+      cell.position === "h" ? colIndex - cell.colIndex : rowIndex - cell.rowIndex;
+    const part =
+      segment === 0
+        ? "boat-stern"
+        : segment === cell.size - 1
+        ? "boat-bow"
+        : "boat-mid";
+
+    return `cell-with-boat boat-${cell.position} ${part}`;
+  };
+
+  // revealed boards hold "X" for a hit and "O" for a miss
+  const getShotClass = (value) =>
+    value === "X" ? "cell-hit" : value === "O" ? "cell-miss" : "";
+
+  const renderShot = (value) => {
+    if (value === "X") return <span className="shot shot-hit" title="Hit" />;
+    if (value === "O") return <span className="shot shot-miss" title="Miss" />;
+    return null;
+  };
+
   return (
     <div className="battleship-online-container">
       {statusOfGame === "ongoing" && (
@@ -404,9 +430,15 @@ const SingleRoomBattleship = () => {
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`battleship-cell ${
-                    cell && cell.size ? "cell-with-boat" : "cell-without-boat"
-                  }`}
+                  className={`battleship-cell ${getBoatCellClass(
+                    cell,
+                    rowIndex,
+                    colIndex
+                  )} ${getShotClass(
+                    player === "playerOne"
+                      ? playerOneBoardRevealed[rowIndex]?.[colIndex]
+                      : playerTwoBoardRevealed[rowIndex]?.[colIndex]
+                  )}`}
                   onDrop={(event) => handleDrop(event, rowIndex, colIndex)}
                   onDragOver={handleDragOver}
                   draggable={cell && cell.placed}
@@ -418,9 +450,11 @@ const SingleRoomBattleship = () => {
                   }
                   onClick={() => handleCellClick(cell)}
                 >
-                  {player === "playerOne"
-                    ? playerOneBoardRevealed[rowIndex][colIndex]
-                    : playerTwoBoardRevealed[rowIndex][colIndex]}
+                  {renderShot(
+                    player === "playerOne"
+                      ? playerOneBoardRevealed[rowIndex][colIndex]
+                      : playerTwoBoardRevealed[rowIndex][colIndex]
+                  )}
                 </div>
               );
             })
@@ -432,14 +466,14 @@ const SingleRoomBattleship = () => {
               row.map((cell, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`battleship-cell ${
-                    player !== nextTurn ? "pointer-none" : ""
-                  }`}
+                  className={`battleship-cell opponent-cell ${getShotClass(
+                    cell
+                  )} ${player !== nextTurn ? "pointer-none" : ""}`}
                   onClick={() => {
                     handlePlayerClickOnBoard(rowIndex, colIndex);
                   }}
                 >
-                  {cell}
+                  {renderShot(cell)}
                 </div>
               ))
             )}

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "antd";
 import CreateRoom from "./CreateRoom";
 import Rooms from "./Rooms";
 import { useSocket } from "../../SocketContext";
-import { io } from "socket.io-client";
 
 const MemoryOnlineHome = () => {
   const socket = useSocket();
@@ -35,20 +33,18 @@ const MemoryOnlineHome = () => {
           <CreateRoom />
         </div>
       )}
-      {typeOfGame !== "home" && (
-        <button
-          className="memory-type-button"
-          onClick={() =>
-            onChangeTypeOfGame(
-              typeOfGame === "create-room" ? "join-room" : "create-room"
-            )
-          }
-        >
-          <span>
-            {typeOfGame === "create-room" ? "Join room" : "Create room"}
-          </span>
-        </button>
-      )}
+      <button
+        className="memory-type-button"
+        onClick={() =>
+          onChangeTypeOfGame(
+            typeOfGame === "create-room" ? "join-room" : "create-room"
+          )
+        }
+      >
+        <span>
+          {typeOfGame === "create-room" ? "Join room" : "Create room"}
+        </span>
+      </button>
     </div>
   );
 };

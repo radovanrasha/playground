@@ -111,10 +111,7 @@ const SingleRoom = () => {
       <div className="single-room-container">
         <div className="turn-row">
           <p>
-            {(gameData?.game?.nextTurn === "playerOne" &&
-              localStorage.getItem("player") === "playerOne") ||
-            (gameData?.game?.nextTurn === "playerTwo" &&
-              localStorage.getItem("player") === "playerTwo")
+            {gameData?.game?.nextTurn === localStorage.getItem("player")
               ? "Your turn"
               : "Opponent turn"}
           </p>

@@ -30,6 +30,11 @@ export default function () {
           <CustomLink setMenuActive={setMenuActive} to="/battleship">
             Battleship Game
           </CustomLink>
+          {/* Hangman is disabled until the game is finished
+          <CustomLink setMenuActive={setMenuActive} to="/hangman">
+            Hangman Game
+          </CustomLink>
+          */}
           <CustomLink setMenuActive={setMenuActive} to="/about">
             About me
           </CustomLink>

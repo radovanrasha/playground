@@ -1,0 +1,15 @@
+# Production compose file — lives on the VPS and is refreshed on every deploy.
+# It does NOT build anything: it pulls the prebuilt image from GHCR (the CI
+# pipeline builds & pushes it). The container always listens on 80 inside;
+# we publish it ONLY to localhost so the public can't hit it directly —
+# nginx on the host reverse-proxies the domain to 127.0.0.1:${HOST_PORT}.
+#
+# Mapping is host:container — left = the port exposed on the VPS (3006, the
+# same port the old pm2 setup used), right = nginx inside the container (80).
+services:
+  web:
+    image: ghcr.io/radovanrasha/playground:latest
+    container_name: playground-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${HOST_PORT:-3006}:80"
