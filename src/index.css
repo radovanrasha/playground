@@ -1,11 +1,16 @@
 /* Light theme (default) */
 :root {
-  --bg-color: rgba(214, 213, 211, 0.5);
+  /* opaque, so the page, header and footer all render the same colour
+     (the old semi-transparent value got darker wherever it was layered) */
+  --bg-color: rgb(224, 224, 222);
   --bg-cont-color: rgba(243, 242, 239, 0.5);
   --text-color-two: #183153;
   --text-color: #21252b;
   --temp-bg-color: #c7fcff;
   --temp-color: #3f454e;
+  --menu-bg: #f3f2ef;
+  --nav-accent: #183153;
+  --nav-hover: rgba(33, 37, 43, 0.08);
 }
 
 /* Dark theme */
@@ -17,6 +22,9 @@
   --text-color-second: #21252b;
   --temp-bg-color: #3f454e;
   --temp-color: #c7fcff;
+  --menu-bg: #2b3038;
+  --nav-accent: #3b62a3;
+  --nav-hover: rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -35,30 +43,294 @@ body {
   min-height: 100vh;
 }
 
+/* ---------- Navigation ---------- */
 .nav {
-  background-color: var(--bg-color);
   color: var(--text-color);
   display: flex;
-  justify-content: center;
-  align-items: stretch;
-  gap: 2rem;
+  flex-direction: row;
+  align-items: center;
   padding: 0 1rem;
 }
+
 .nav ul {
-  padding: 0;
+  padding: 10px 0;
   margin: 0;
   list-style: none;
   display: flex;
-  gap: 1rem;
+  flex-direction: row;
+  gap: 6px;
 }
 
 .nav a {
   color: inherit;
   text-decoration: none;
-  height: 100%;
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav a:hover {
+  background-color: var(--nav-hover);
+}
+
+.nav li.active a {
+  background-color: var(--nav-accent);
+  color: #fff;
+}
+
+/* desktop: icons sit inline before the label; drawer-only parts are hidden */
+.nav a {
+  gap: 8px;
+}
+
+.nav-icon {
+  display: inline-flex;
+  font-size: 14px;
+}
+
+.nav-arrow,
+.menu-head,
+.menu-foot {
+  display: none !important;
+}
+
+.nav a:focus-visible,
+.hamburger:focus-visible {
+  outline: 2px solid var(--nav-accent);
+  outline-offset: 2px;
+}
+
+/* Hamburger: three bars that morph into an X */
+/* only the bars are visible: no button box, also not on tap */
+.hamburger {
+  display: none;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin: 8px 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hamburger:hover span {
+  opacity: 0.7;
+}
+
+.hamburger span {
+  position: absolute;
+  left: 11px;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--text-color);
+  transition: top 0.3s ease, transform 0.3s ease, opacity 0.2s ease;
+}
+
+.hamburger span:nth-child(1) {
+  top: 15px;
+}
+
+.hamburger span:nth-child(2) {
+  top: 21px;
+}
+
+.hamburger span:nth-child(3) {
+  top: 27px;
+}
+
+.menu-open .hamburger span:nth-child(1) {
+  top: 21px;
+  transform: rotate(45deg);
+}
+
+.menu-open .hamburger span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+
+.menu-open .hamburger span:nth-child(3) {
+  top: 21px;
+  transform: rotate(-45deg);
+}
+
+.menu-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  /* the button stays on top so the X closes the open drawer */
+  .hamburger {
+    display: block;
+    z-index: 1002;
+  }
+
+  /* the menu is a drawer that slides in from the left, full height */
+  .nav ul {
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(84vw, 340px);
+    flex-direction: column;
+    gap: 6px;
+    padding: 76px 16px 24px;
+    background-color: var(--menu-bg);
+    border-radius: 0 28px 28px 0;
+    box-shadow: 24px 0 60px -24px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    visibility: hidden;
+    transform: translateX(-105%);
+    transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+      visibility 0.4s;
+  }
+
+  .nav ul.active {
+    visibility: visible;
+    transform: none;
+  }
+
+  /* items glide in one after another */
+  .nav li {
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .nav ul.active li {
+    opacity: 1;
+    transform: none;
+  }
+
+  .nav ul.active li:nth-child(2) {
+    transition-delay: 0.08s;
+  }
+
+  .nav ul.active li:nth-child(3) {
+    transition-delay: 0.12s;
+  }
+
+  .nav ul.active li:nth-child(4) {
+    transition-delay: 0.16s;
+  }
+
+  .nav ul.active li:nth-child(5) {
+    transition-delay: 0.2s;
+  }
+
+  .nav ul.active li:nth-child(6) {
+    transition-delay: 0.24s;
+  }
+
+  .menu-head {
+    display: flex !important;
+    flex-direction: column;
+    padding: 0 12px 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--nav-hover);
+  }
+
+  .menu-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .menu-sub {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .menu-foot {
+    display: block !important;
+    margin-top: auto;
+    padding: 0 12px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+
+  .nav a {
+    gap: 14px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav a:hover {
+    transform: translateX(4px);
+  }
+
+  .nav-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 19px;
+    background-color: var(--nav-hover);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .nav-arrow {
+    display: inline-flex !important;
+    margin-left: auto;
+    font-size: 12px;
+    opacity: 0.35;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .nav a:hover .nav-arrow {
+    opacity: 0.8;
+    transform: translateX(3px);
+  }
+
+  /* active row: soft highlight, the icon tile carries the accent */
+  .nav li.active a {
+    background-color: var(--nav-hover);
+    color: inherit;
+  }
+
+  .nav li.active .nav-icon {
+    background-color: var(--nav-accent);
+    color: #fff;
+    box-shadow: 0 10px 20px -8px var(--nav-accent);
+  }
+
+  .nav li.active .nav-arrow {
+    opacity: 0.8;
+  }
+
+  .menu-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background-color: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    animation: menu-fade 0.25s ease;
+  }
+}
+
+@keyframes menu-fade {
+  from {
+    opacity: 0;
+  }
 }
 
 .site-title {
@@ -77,105 +349,9 @@ body {
   height: 80px;
 }
 
-.nav li.active {
-  background-color: #555;
-}
-
-.nav li:hover {
-  background-color: #777;
-}
-
 .container {
   /* margin: 1rem; */
   text-align: center;
-}
-
-.nav {
-  flex-direction: column;
-}
-
-.nav ul {
-  flex-direction: column;
-}
-
-.hamburger {
-  display: none; /* Initially hidden, will display in mobile */
-}
-
-/* Hamburger Menu Icon */
-.hamburger span {
-  display: block;
-  width: 25px;
-  height: 3px;
-  margin: 3px 0;
-  background-color: var(--text-color);
-}
-
-@media (max-width: 900px) {
-  /* 768px is typically the breakpoint for tablets. Adjust as needed. */
-  .nav ul {
-    display: none; /* Hide by default in mobile view */
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .nav ul.active {
-    display: flex;
-  }
-
-  .hamburger {
-    display: flex;
-    cursor: pointer;
-    margin: 1rem;
-  }
-
-  .nav li {
-    width: 100%;
-    text-align: center;
-  }
-
-  .nav a {
-    padding: 15px 20px;
-    width: 100%;
-  }
-
-  .nav li:hover,
-  .nav li.active {
-    background-color: #777;
-  }
-}
-
-@media (min-width: 900px) {
-  .nav {
-    flex-direction: row;
-  }
-
-  .nav ul {
-    flex-direction: row;
-  }
-}
-
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 20px;
-  cursor: pointer;
-  margin: 1rem;
-}
-
-.hamburger span {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background-color: var(--text-color);
-}
-
-@media (max-width: 900px) {
-  .hamburger {
-    display: flex;
-  }
 }
 
 body {
@@ -200,8 +376,11 @@ body {
 }
 
 .top-header {
+  position: relative;
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background-color: var(--bg-color);
 }
 
@@ -214,7 +393,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--bg-cont-color);
+  background-color: var(--bg-color);
   border-top: 1px solid var(--bg-color);
   height: 60px;
   color: var(--text-color);
