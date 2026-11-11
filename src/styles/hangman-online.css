@@ -1,14 +1,570 @@
-.masked-term {
+/* ---------- Hangman game ---------- */
+.hm-page {
+  --hm-card: var(--menu-bg);
+  --hm-line: var(--nav-hover);
+  --hm-accent: var(--nav-accent);
+  --hm-good: #2f9e6b;
+  --hm-bad: #d9485f;
+
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
   display: flex;
-  gap: 0.5em;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--text-color);
 }
 
-.incorrect-guesses {
-  display: flex;
-  gap: 0.5em;
+.hm-card {
+  background-color: var(--hm-card);
+  border: 1px solid var(--hm-line);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.45);
 }
 
-.hangman-image {
-  width: 200px;
-  height: 200px;
+/* top bar + scoreboard */
+.hm-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hm-leave {
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.hm-leave:hover {
+  opacity: 1;
+}
+
+.hm-round {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.hm-scoreboard {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.hm-player {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  padding: 14px 18px;
+  background-color: var(--hm-card);
+  border: 1px solid var(--hm-line);
+  border-radius: 18px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* the player whose turn it is to guess gets the accent outline */
+.hm-player.is-guessing {
+  border-color: var(--hm-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--hm-accent) 22%, transparent);
+}
+
+.hm-player-name {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.hm-player-role {
+  grid-row: 2;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.hm-score {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.hm-vs {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.45;
+}
+
+/* status line */
+.hm-status {
+  align-self: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background-color: var(--hm-line);
+  font-weight: 600;
+  text-align: center;
+}
+
+.hm-status.is-active {
+  background-color: var(--hm-accent);
+  color: #fff;
+  animation: hm-pop 0.4s ease;
+}
+
+.hm-round-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  text-align: center;
+  animation: hm-pop 0.4s ease;
+}
+
+.hm-round-result.won {
+  background-color: color-mix(in srgb, var(--hm-good) 16%, transparent);
+  color: color-mix(in srgb, var(--hm-good) 70%, var(--text-color));
+}
+
+.hm-round-result.lost {
+  background-color: color-mix(in srgb, var(--hm-bad) 14%, transparent);
+  color: color-mix(in srgb, var(--hm-bad) 70%, var(--text-color));
+}
+
+.hm-round-result strong {
+  font-size: 18px;
+}
+
+.hm-round-result .hm-drawing {
+  width: 90px;
+  margin-bottom: 4px;
+}
+
+.hm-round-result b {
+  letter-spacing: 0.12em;
+}
+
+/* choosing the word */
+.hm-term-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hm-term-form label {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.hm-hint {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.65;
+}
+
+.hm-term-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.hm-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--hm-line);
+  border-radius: 12px;
+  background-color: var(--bg-color);
+  color: inherit;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hm-input:focus {
+  border-color: var(--hm-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--hm-accent) 22%, transparent);
+}
+
+.hm-input::placeholder {
+  letter-spacing: normal;
+  opacity: 0.45;
+}
+
+.hm-button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--hm-accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+.hm-button:hover {
+  filter: brightness(1.12);
+}
+
+.hm-button:active {
+  transform: scale(0.97);
+}
+
+.hm-button.ghost {
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid var(--hm-line);
+}
+
+.hm-error {
+  margin: 4px 0 0;
+  color: var(--hm-bad);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* waiting for the opponent's word */
+.hm-waiting {
+  padding: 36px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.hm-waiting p {
+  margin: 0;
+  opacity: 0.75;
+}
+
+.hm-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.hm-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--hm-accent);
+  animation: hm-bounce 1.2s infinite ease-in-out;
+}
+
+.hm-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.hm-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* board: drawing + word */
+.hm-board {
+  display: grid;
+  grid-template-columns: minmax(160px, 240px) 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+
+.hm-drawing {
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hm-gallows {
+  opacity: 0.85;
+}
+
+.hm-part {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hm-draw 0.5s ease forwards;
+}
+
+.hm-drawing.hanged .hm-parts,
+.hm-drawing.hanged .hm-face {
+  stroke: var(--hm-bad);
+}
+
+.hm-face {
+  stroke-width: 3;
+}
+
+.hm-eyes {
+  stroke-width: 3.2;
+}
+
+.hm-board-side {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.hm-lives {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hm-lives span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--hm-bad);
+  transition: background-color 0.3s ease;
+}
+
+.hm-lives span.full {
+  background-color: var(--hm-bad);
+}
+
+.hm-lives em {
+  margin-left: 6px;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.65;
+}
+
+/* --longest (set inline) is the letter count of the longest word: tiles shrink
+   so that word fits the column (cqw = width of .hm-board-side) */
+.hm-word {
+  --tile-max: 34px;
+  --tile: min(var(--tile-max), calc(100cqw / (var(--longest) * 1.2)));
+
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px calc(var(--tile) * 0.65);
+}
+
+.hm-word-part {
+  display: flex;
+  gap: calc(var(--tile) * 0.2);
+}
+
+.hm-letter {
+  width: var(--tile);
+  height: calc(var(--tile) * 1.3);
+  display: grid;
+  place-items: center;
+  border-bottom: 3px solid currentColor;
+  font-size: calc(var(--tile) * 0.76);
+  font-weight: 800;
+  opacity: 0.55;
+}
+
+.hm-letter.revealed {
+  opacity: 1;
+  border-bottom-color: var(--hm-good);
+  animation: hm-pop 0.35s ease;
+}
+
+.hm-your-word {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.hm-your-word b {
+  letter-spacing: 0.1em;
+}
+
+.hm-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.hm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hm-chip {
+  min-width: 30px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background-color: color-mix(in srgb, var(--hm-bad) 16%, transparent);
+  color: var(--hm-bad);
+  font-weight: 800;
+  text-align: center;
+  animation: hm-pop 0.3s ease;
+}
+
+.hm-none {
+  font-size: 14px;
+  opacity: 0.45;
+}
+
+/* overlays: waiting room, opponent left, final result */
+.hm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  animation: hm-fade 0.25s ease;
+}
+
+.hm-dialog {
+  width: min(100%, 380px);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--text-color);
+  animation: hm-pop 0.35s ease;
+}
+
+.hm-dialog h2 {
+  margin: 0;
+  color: inherit;
+  font-size: 24px;
+}
+
+.hm-dialog p {
+  margin: 0;
+}
+
+.hm-dialog.won h2 {
+  color: var(--hm-good);
+}
+
+.hm-dialog.lost h2 {
+  color: var(--hm-bad);
+}
+
+.hm-dialog .loader {
+  margin: 0 0 6px;
+}
+
+.hm-qr {
+  width: 160px;
+  height: 160px;
+  border-radius: 12px;
+  background-color: #fff;
+  padding: 8px;
+}
+
+.hm-final-score {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+@keyframes hm-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hm-pop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes hm-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hm-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .hm-scoreboard {
+    gap: 8px;
+  }
+
+  .hm-player {
+    padding: 10px 12px;
+  }
+
+  .hm-score {
+    font-size: 26px;
+  }
+
+  .hm-board {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .hm-drawing {
+    max-width: 170px;
+  }
+
+  .hm-board-side {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hm-word,
+  .hm-chips {
+    justify-content: center;
+  }
+
+  .hm-word {
+    --tile-max: 28px;
+  }
+
+  .hm-term-row {
+    flex-direction: column;
+  }
 }

@@ -2,8 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import memorybanner from "../assets/memory.png";
 import battleshipbanner from "../assets/battleship.jpg";
-// Hangman is disabled until the game is finished
-// import hangmanbanner from "../assets/hangmanbanner.png";
+import hangmanbanner from "../assets/hangmanbanner.png";
 
 const Home = () => {
   return (
@@ -28,7 +27,6 @@ const Home = () => {
           <span>Battleship game</span>
         </button>
       </Link>
-      {/* Hangman is disabled until the game is finished
       <Link to="/hangman" className="memory-type-link">
         <img
           className="game-banner-home image-slide"
@@ -39,7 +37,6 @@ const Home = () => {
           <span>Hangman</span>
         </button>
       </Link>
-      */}
     </div>
   );
 };

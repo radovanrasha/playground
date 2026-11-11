@@ -1,225 +1,382 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import ReactConfetti from "react-confetti";
+import { useWindowSize } from "react-use";
 import { useSocket } from "../../SocketContext";
-import { useNavigate } from "react-router-dom";
-import hangmanPng0 from "./assets/hangman0.png";
-import hangmanPng1 from "./assets/hangman1.png";
-import hangmanPng2 from "./assets/hangman2.png";
-import hangmanPng3 from "./assets/hangman3.png";
-import hangmanPng4 from "./assets/hangman4.png";
-import hangmanPng5 from "./assets/hangman5.png";
-import hangmanPng6 from "./assets/hangman6.png";
-import { Button, Input, Modal, notification } from "antd";
-import Keyboard from "./components/Keyboard";
+import Keyboard, { KEYBOARD_LETTERS } from "./components/Keyboard";
+import HangmanDrawing, { MAX_MISSES } from "./components/HangmanDrawing";
+
+const WINNING_SCORE = 3;
+// same rule as the server: letters from the keyboard and spaces
+const TERM_REGEX = /^[A-ZČĆŽŠĐ ]+$/;
+
+// splits the masked term into words so a word never breaks across lines
+const toWords = (chars = []) =>
+  chars.reduce(
+    (words, char) => {
+      if (char === " ") words.push([]);
+      else words[words.length - 1].push(char);
+      return words;
+    },
+    [[]]
+  );
+
+// tiles are sized in CSS from the longest word, so long words still fit
+const MaskedWord = ({ chars }) => {
+  const words = toWords(chars);
+  const longest = Math.max(...words.map((word) => word.length), 1);
+
+  return (
+    <div className="hm-word" style={{ "--longest": longest }}>
+      {words.map((word, wordIndex) => (
+        <div className="hm-word-part" key={wordIndex}>
+          {word.map((char, index) => (
+            <span
+              key={index}
+              className={`hm-letter ${char !== "_" ? "revealed" : ""}`}
+            >
+              {char !== "_" ? char : ""}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const SingleRoomHangman = () => {
   const { id } = useParams();
   const socket = useSocket();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { width, height } = useWindowSize();
 
-  const hangmanImagesDict = {
-    missed0: hangmanPng0,
-    missed1: hangmanPng1,
-    missed2: hangmanPng2,
-    missed3: hangmanPng3,
-    missed4: hangmanPng4,
-    missed5: hangmanPng5,
-    missed6: hangmanPng6,
-  };
+  // read once on mount: two tabs of one browser share localStorage
+  const [player] = useState(() => {
+    const queryPlayer = new URLSearchParams(location.search).get("player");
+    if (queryPlayer) localStorage.setItem("player", queryPlayer);
+    return queryPlayer || localStorage.getItem("player");
+  });
 
-  const [gameData, setGameData] = useState({});
-  const [hangmanImageShowed, setHangmanImageShowed] = useState({});
-  const [isTermSetter, setIsTermSetter] = useState(false);
-  const [isTermChosen, setIsTermChosen] = useState(false);
+  const [game, setGame] = useState(null);
   const [enteredTerm, setEnteredTerm] = useState("");
-  const [guessedLetters, setGuessedLetters] = useState([]);
-  const [incorrectGuesses, setIncorrectGuesses] = useState([]);
-  const [maskedTerm, setMaskedTerm] = useState([]);
-  const [showGameModal, setShowGameModal] = useState(false);
+  const [termError, setTermError] = useState("");
+  // the setter's own word, shown to them while the opponent guesses
+  const [myTerm, setMyTerm] = useState("");
 
   useEffect(() => {
-    if (socket) {
-      socket.emit("joinRoomHangman", id, localStorage.getItem("player"));
+    if (!socket) return;
 
-      socket.on("gameInfoHangman", (data) => {
-        setGameData(data);
+    const onGameInfo = (data) => setGame(data.game);
+    const onError = (message) => setTermError(message);
+    const handleUnload = () => socket.emit("gameCanceledHangman", id);
 
-        if (data.game.status === "finished") {
-          setShowGameModal(true);
-        }
+    socket.on("gameInfoHangman", onGameInfo);
+    socket.on("hangmanError", onError);
+    socket.emit("joinRoomHangman", id, player);
+    window.addEventListener("beforeunload", handleUnload);
 
-        const numOfMissed =
-          data?.game?.rounds[data?.game?.rounds.length - 1].missed;
+    return () => {
+      socket.off("gameInfoHangman", onGameInfo);
+      socket.off("hangmanError", onError);
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [socket, id, player]);
 
-        const maskedTerm =
-          data?.game?.rounds[data?.game?.rounds.length - 1].maskedTerm;
+  const rounds = game?.rounds || [];
+  const round = rounds[rounds.length - 1];
+  const lastEnded = [...rounds].reverse().find((r) => r.status === "ended");
+  const status = game?.status;
+  const isSetter = round?.termSetter === player;
+  const myScore =
+    player === "playerOne" ? game?.playerOneScore : game?.playerTwoScore;
+  const opponentScore =
+    player === "playerOne" ? game?.playerTwoScore : game?.playerOneScore;
+  const canGuess =
+    status === "ongoing" && round?.status === "in_progress" && !isSetter;
+  const guesses = round?.guesses || [];
 
-        setMaskedTerm(maskedTerm);
-
-        setIncorrectGuesses(
-          data?.game?.rounds[data?.game?.rounds.length - 1].incorrectGuesses
-        );
-
-        setIsTermSetter(
-          data?.game?.rounds[data?.game?.rounds.length - 1].termSetter ===
-            localStorage.getItem("player")
-        );
-
-        setIsTermChosen(
-          data?.game?.rounds[data?.game?.rounds.length - 1].term.length > 0
-        );
-
-        setGuessedLetters(
-          data?.game?.rounds[data?.game?.rounds.length - 1].guesses
-        );
-
-        setHangmanImageShowed(hangmanImagesDict[`missed${numOfMissed}`]);
-      });
-
-      const handleUnload = () => {
-        socket.emit("gameCanceledHangman", id);
-      };
-
-      window.addEventListener("beforeunload", handleUnload);
-
-      return () => {
-        window.removeEventListener("beforeunload", handleUnload);
-      };
-    }
-  }, [socket]);
-
-  const handleConfirmTerm = () => {
-    const regex = /^[\p{L} ]+$/u;
-    const trimmedTerm = enteredTerm.trim();
-
-    if (trimmedTerm === "") {
-      notification.warning({
-        message: "Please enter a term.",
-      });
-      return;
-    }
-
-    if (!regex.test(trimmedTerm)) {
-      notification.warning({
-        message: "A term can only contain letters and spaces.",
-      });
-      return;
-    }
-
-    socket.emit(
-      "enteredTermHangman",
-      id,
-      localStorage.getItem("player"),
-      trimmedTerm
-    );
-  };
+  // a new round starts with an empty form
+  useEffect(() => {
+    setEnteredTerm("");
+    setTermError("");
+    setMyTerm("");
+  }, [round?.roundNumber]);
 
   const handleGuess = (letter) => {
-    socket.emit(
-      "handleGuessHangman",
-      id,
-      localStorage.getItem("player"),
-      letter
-    );
+    if (!canGuess || guesses.includes(letter)) return;
+    socket.emit("handleGuessHangman", id, player, letter);
   };
 
+  // the guesser can also type letters on a physical keyboard
+  useEffect(() => {
+    if (!canGuess) return;
+
+    const onKeyDown = (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const letter = event.key.toUpperCase();
+      if (KEYBOARD_LETTERS.includes(letter)) handleGuess(letter);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
+
+  const handleConfirmTerm = (event) => {
+    event.preventDefault();
+    const term = enteredTerm.trim().replace(/\s+/g, " ").toUpperCase();
+
+    if (term.length < 2) {
+      setTermError("The word needs at least 2 letters.");
+      return;
+    }
+    if (term.length > 30) {
+      setTermError("Keep it to 30 characters or less.");
+      return;
+    }
+    if (!TERM_REGEX.test(term)) {
+      setTermError("Use only letters from the keyboard and spaces.");
+      return;
+    }
+
+    setTermError("");
+    setMyTerm(term);
+    socket.emit("enteredTermHangman", id, player, term);
+  };
+
+  const leaveGame = () => {
+    if (status === "initialized" || status === "ongoing") {
+      socket.emit("gameCanceledHangman", id);
+    }
+    navigate("/hangman-multiplayer");
+  };
+
+  const statusText = (() => {
+    if (round?.status === "choosing_term") {
+      return isSetter ? "Your turn: choose a word" : "Opponent is choosing a word";
+    }
+    return isSetter ? "Opponent is guessing your word" : "Guess the word";
+  })();
+
+  // what happened in the round that just ended, from this player's view
+  const lastRoundText = (() => {
+    if (!lastEnded) return null;
+    const wasSetter = lastEnded.termSetter === player;
+    if (lastEnded.result === "guessed") {
+      return wasSetter ? "Opponent guessed your word" : "You guessed it!";
+    }
+    return wasSetter ? "Opponent got hanged" : "You got hanged";
+  })();
+  const lastRoundWon =
+    lastEnded &&
+    (lastEnded.result === "guessed") !== (lastEnded.termSetter === player);
+
+  const iWon = status === "finished" && myScore > opponentScore;
+  const livesLeft = MAX_MISSES - (round?.missed || 0);
+
   return (
-    <div className="memory-online-container">
-      <div className="single-room-container">
-        <div className="turn-row">
-          <p>
-            {!isTermChosen &&
-              (isTermSetter
-                ? "Choose the term"
-                : "Opponent is chosing the term")}
-          </p>
-          <p>
-            {isTermChosen &&
-              (isTermSetter
-                ? "Opponent is guessing the term"
-                : "Guess the term")}
-          </p>
-        </div>
-        <div className="score-row">
-          <div className="one-score">
-            <p>First player score: </p>
-            <p>{gameData?.game?.playerOneScore}</p>
-          </div>
-          <div className="one-score">
-            <p>Second player score: </p>
-            <p>{gameData?.game?.playerTwoScore}</p>
-          </div>
-        </div>
-
-        {!isTermChosen && isTermSetter && (
-          <div>
-            <label>Enter the term</label>
-            <Input
-              value={enteredTerm}
-              onChange={(e) => {
-                setEnteredTerm(e.target.value);
-              }}
-            ></Input>
-            <Button
-              onClick={() => {
-                handleConfirmTerm();
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        )}
-
-        <img className="hangman-image" src={hangmanImageShowed}></img>
-
-        {!isTermSetter && isTermChosen && (
-          <div className="masked-term">
-            {maskedTerm &&
-              maskedTerm.length > 0 &&
-              maskedTerm.map((item, index) => (
-                <span key={index}>{`${item}`}</span>
-              ))}
-          </div>
-        )}
-
-        <div className="incorrect-guesses">
-          <p>Incorrect guesses:</p>
-          {incorrectGuesses &&
-            incorrectGuesses.length > 0 &&
-            incorrectGuesses.map((item, index) => {
-              return <span>{item}</span>;
-            })}
-        </div>
-
-        {!isTermSetter && isTermChosen && (
-          <Keyboard
-            onLetterClick={handleGuess}
-            guessedLetters={guessedLetters}
-          />
+    <div className="hm-page">
+      <div className="hm-topbar">
+        <button type="button" className="hm-leave" onClick={leaveGame}>
+          ← Leave
+        </button>
+        {round && (
+          <span className="hm-round">
+            Round {round.roundNumber} · first to {WINNING_SCORE}
+          </span>
         )}
       </div>
 
-      {gameData?.game?.status === "initialized" && (
-        <div className="overlay-waiting">
-          <div className="loader"></div>
-          <div className="loader-text">Waiting for second player...</div>
+      <div className="hm-scoreboard">
+        <div className={`hm-player ${isSetter ? "" : "is-guessing"}`}>
+          <span className="hm-player-name">You</span>
+          <span className="hm-player-role">
+            {isSetter ? "Word setter" : "Guesser"}
+          </span>
+          <span className="hm-score">{myScore ?? 0}</span>
+        </div>
+        <span className="hm-vs">vs</span>
+        <div className={`hm-player ${isSetter ? "is-guessing" : ""}`}>
+          <span className="hm-player-name">Opponent</span>
+          <span className="hm-player-role">
+            {isSetter ? "Guesser" : "Word setter"}
+          </span>
+          <span className="hm-score">{opponentScore ?? 0}</span>
+        </div>
+      </div>
+
+      {status === "ongoing" && round && (
+        <>
+          <div className={`hm-status ${canGuess ? "is-active" : ""}`}>
+            {statusText}
+          </div>
+
+          {round.status === "choosing_term" && lastEnded && (
+            <div
+              className={`hm-round-result ${lastRoundWon ? "won" : "lost"}`}
+            >
+              {lastEnded.result === "hanged" && (
+                <HangmanDrawing missed={MAX_MISSES} />
+              )}
+              <strong>{lastRoundText}</strong>
+              <span>
+                The word was <b>{lastEnded.term.join("")}</b>
+              </span>
+            </div>
+          )}
+
+          {round.status === "choosing_term" &&
+            (isSetter ? (
+              <form className="hm-card hm-term-form" onSubmit={handleConfirmTerm}>
+                <label htmlFor="hm-term">Pick a word for your opponent</label>
+                <p className="hm-hint">
+                  Letters from the keyboard and spaces, up to 30 characters.
+                </p>
+                <div className="hm-term-row">
+                  <input
+                    id="hm-term"
+                    className="hm-input"
+                    autoComplete="off"
+                    autoFocus
+                    maxLength={30}
+                    value={enteredTerm}
+                    onChange={(event) => setEnteredTerm(event.target.value)}
+                    placeholder="e.g. BEOGRAD"
+                  />
+                  <button type="submit" className="hm-button">
+                    Start round
+                  </button>
+                </div>
+                {termError && <p className="hm-error">{termError}</p>}
+              </form>
+            ) : (
+              <div className="hm-card hm-waiting">
+                <span className="hm-dots">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <p>Your opponent is picking a word for you.</p>
+              </div>
+            ))}
+
+          {round.status === "in_progress" && (
+            <>
+              <div className="hm-card hm-board">
+                <HangmanDrawing missed={round.missed} />
+                <div className="hm-board-side">
+                  <div className="hm-lives" aria-label={`${livesLeft} tries left`}>
+                    {Array.from({ length: MAX_MISSES }, (_, index) => (
+                      <span
+                        key={index}
+                        className={index < livesLeft ? "full" : ""}
+                      />
+                    ))}
+                    <em>
+                      {livesLeft} {livesLeft === 1 ? "try" : "tries"} left
+                    </em>
+                  </div>
+                  <MaskedWord chars={round.maskedTerm} />
+                  {isSetter && myTerm && (
+                    <p className="hm-your-word">
+                      Your word: <b>{myTerm}</b>
+                    </p>
+                  )}
+                  <div className="hm-wrong">
+                    <span className="hm-label">Wrong letters</span>
+                    <div className="hm-chips">
+                      {round.incorrectGuesses.length > 0 ? (
+                        round.incorrectGuesses.map((letter) => (
+                          <span key={letter} className="hm-chip">
+                            {letter}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="hm-none">none yet</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Keyboard
+                onLetterClick={handleGuess}
+                guesses={guesses}
+                incorrect={round.incorrectGuesses}
+                disabled={!canGuess}
+              />
+            </>
+          )}
+        </>
+      )}
+
+      {status === "initialized" && (
+        <div className="hm-overlay">
+          <div className="hm-card hm-dialog">
+            <div className="loader"></div>
+            <h2>Waiting for the second player</h2>
+            {game?.title && <p className="hm-hint">Room: {game.title}</p>}
+            {game?.qrcode && (
+              <>
+                <img className="hm-qr" src={game.qrcode} alt="QR code to join" />
+                <p className="hm-hint">Scan the QR code to join from a phone</p>
+              </>
+            )}
+            <button type="button" className="hm-button ghost" onClick={leaveGame}>
+              Cancel
+            </button>
+          </div>
         </div>
       )}
-      <Modal
-        footer={[]}
-        onCancel={() => {
-          setShowGameModal(false);
-          navigate(`/hangman-multiplayer`);
-        }}
-        open={showGameModal}
-      >
-        <div>Game finished!</div>
-        <p>
-          {gameData?.game?.playerOneScore > gameData?.game?.playerTwoScore
-            ? `Player one won ${gameData?.game?.playerOneScore} : ${gameData?.game?.playerTwoScore}`
-            : `Player two won ${gameData?.game?.playerTwoScore} : ${gameData?.game?.playerOneScore}`}
-        </p>
-      </Modal>
+
+      {status === "canceled" && (
+        <div className="hm-overlay">
+          <div className="hm-card hm-dialog">
+            <h2>Game over</h2>
+            <p>The other player left the game.</p>
+            <button
+              type="button"
+              className="hm-button"
+              onClick={() => navigate("/hangman-multiplayer")}
+            >
+              Back to rooms
+            </button>
+          </div>
+        </div>
+      )}
+
+      {status === "finished" && (
+        <div className="hm-overlay">
+          <div className={`hm-card hm-dialog ${iWon ? "won" : "lost"}`}>
+            <h2>{iWon ? "You won!" : "You lost"}</h2>
+            <p className="hm-final-score">
+              {myScore} : {opponentScore}
+            </p>
+            {lastEnded && (
+              <p className="hm-hint">
+                Last word: <b>{lastEnded.term.join("")}</b>
+              </p>
+            )}
+            <button
+              type="button"
+              className="hm-button"
+              onClick={() => navigate("/hangman-multiplayer")}
+            >
+              New game
+            </button>
+          </div>
+        </div>
+      )}
+
+      {iWon && (
+        <ReactConfetti
+          colors={["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]}
+          recycle={false}
+          numberOfPieces={400}
+          width={width}
+          height={height}
+        />
+      )}
     </div>
   );
 };

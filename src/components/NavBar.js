@@ -4,6 +4,7 @@ import {
   HomeOutlined,
   AppstoreOutlined,
   AimOutlined,
+  FontColorsOutlined,
   UserOutlined,
   RightOutlined,
 } from "@ant-design/icons";
@@ -73,17 +74,19 @@ export default function () {
           >
             Battleship Game
           </CustomLink>
-          {/* Hangman is disabled until the game is finished
-          <CustomLink setMenuActive={setMenuActive} to="/hangman">
+          <CustomLink
+            setMenuActive={setMenuActive}
+            to="/hangman"
+            icon={<FontColorsOutlined />}
+          >
             Hangman Game
           </CustomLink>
-          */}
           <CustomLink
             setMenuActive={setMenuActive}
             to="/about"
             icon={<UserOutlined />}
           >
-            About me
+            About
           </CustomLink>
           <li className="menu-foot" aria-hidden="true">
             since 2023

@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../SocketContext";
 
-const Rooms = ({ rooms, setRooms }) => {
+// the room list itself is kept up to date by HangmanOnlineHome
+const Rooms = ({ rooms }) => {
   const socket = useSocket();
 
   const navigate = useNavigate();
 
+  // the game page joins the room; this only picks the role
   const onJoinRoom = (id) => {
     localStorage.setItem("player", "playerTwo");
-
-    socket.emit("joinRoomHangman", id, "playerTwo");
 
     navigate(`/hangman-multiplayer/${id}`);
   };
 
+  // refresh when switching to the list
   useEffect(() => {
-    if (socket) {
-      socket.emit("getFreeRoomsHangman");
-      socket.on("freeRoomsHangman", (roomsArr) => {
-        setRooms(roomsArr);
-      });
-    }
-  }, []);
+    if (socket) socket.emit("getFreeRoomsHangman");
+  }, [socket]);
 
   return (
     <div className="free-rooms-container">

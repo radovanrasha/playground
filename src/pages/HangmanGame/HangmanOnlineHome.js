@@ -11,14 +11,17 @@ const HangmanOnlineHome = () => {
     setTypeOfGame(type);
   };
 
+  // the socket connects after the first render, so wait for it
   useEffect(() => {
-    if (socket) {
-      socket.emit("getFreeRoomsHangman");
-      socket.on("freeRoomsHangman", (roomsArr) => {
-        setRooms(roomsArr);
-      });
-    }
-  }, []);
+    if (!socket) return;
+
+    const onFreeRooms = (roomsArr) => setRooms(roomsArr);
+
+    socket.on("freeRoomsHangman", onFreeRooms);
+    socket.emit("getFreeRoomsHangman");
+
+    return () => socket.off("freeRoomsHangman", onFreeRooms);
+  }, [socket]);
 
   return (
     <div className="memory-online-container">

@@ -43,6 +43,12 @@ body {
   min-height: 100vh;
 }
 
+/* the footer is fixed (60px), so every page keeps that much room at the
+   bottom and its last line can scroll above the footer */
+#root {
+  padding-bottom: 60px;
+}
+
 /* ---------- Navigation ---------- */
 .nav {
   color: var(--text-color);

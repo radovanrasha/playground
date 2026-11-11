@@ -6,19 +6,25 @@ const keyboardRows = [
   ["Z", "X", "C", "V", "B", "N", "M"],
 ];
 
-const Keyboard = ({ onLetterClick, guessedLetters }) => {
+export const KEYBOARD_LETTERS = keyboardRows.flat();
+
+// used keys show whether the letter was in the word (correct) or not (wrong)
+const Keyboard = ({ onLetterClick, guesses = [], incorrect = [], disabled }) => {
   return (
-    <div className="keyboard-container">
+    <div className={`keyboard-container ${disabled ? "is-disabled" : ""}`}>
       {keyboardRows.map((row, rowIndex) => (
         <div key={rowIndex} className="keyboard-row">
           {row.map((key) => {
-            const isGuessed = guessedLetters.includes(key);
+            const isUsed = guesses.includes(key);
+            const state = !isUsed ? "" : incorrect.includes(key) ? "wrong" : "correct";
+
             return (
               <button
                 key={key}
-                className="keyboard-key"
+                type="button"
+                className={`keyboard-key ${state}`}
                 onClick={() => onLetterClick(key)}
-                disabled={isGuessed}
+                disabled={isUsed || disabled}
               >
                 {key}
               </button>
