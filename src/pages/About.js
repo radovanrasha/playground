@@ -6,7 +6,7 @@ const PORTFOLIO_URL = "https://portfolio.radovanrasha.com";
 const About = () => {
   return (
     <div className="about-container">
-      <p className="header-div"> &lt;About me/&gt;</p>
+      <p className="header-div"> &lt;About/&gt;</p>
       <div className="about-row">
         <img
           className="leftslide"
@@ -26,9 +26,14 @@ const About = () => {
             through courses, coding competitions and side projects like this
             one.
           </p>
+          <p className="rightslide" style={{ animationDelay: "0.9s" }}>
+            I started this project in 2023 and have kept adding new games to it
+            over time. Recently I gave the design and the overall look of the
+            app a big upgrade.
+          </p>
           <a
             className="about-portfolio-link rightslide"
-            style={{ animationDelay: "0.9s" }}
+            style={{ animationDelay: "1.2s" }}
             href={PORTFOLIO_URL}
             target="_blank"
             rel="noopener noreferrer"

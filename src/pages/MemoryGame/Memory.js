@@ -9,7 +9,7 @@ const Memory = () => {
       <img className="game-banner" src={banner} alt="Profile" />
       <div className="memory-game-row">
         <Link to="/memory-sologame" className="memory-type-link">
-          <button className="memory-type-button left-button">
+          <button className="memory-type-button">
             <span>Solo memory game</span>
           </button>
         </Link>

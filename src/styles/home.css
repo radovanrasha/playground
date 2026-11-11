@@ -1,17 +1,43 @@
+/* one column on phones, all games side by side from 900px; the height grows
+   with the content (no fixed height) */
 .home-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  height: 80vh;
+  width: 100%;
+  max-width: 1400px;
+  min-height: calc(100vh - 140px);
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  gap: 28px;
+}
+
+.home-container .memory-type-link {
+  margin: 0;
 }
 
 .game-banner-home {
-  height: 300px;
-  width: 520px;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 520 / 300;
+  object-fit: cover;
   border-radius: 15px;
   padding: 0px;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
+  transition: opacity 0.2s ease;
+}
+
+.home-container .memory-type-button {
+  width: 100%;
+  max-width: 300px;
+}
+
+@media (min-width: 900px) {
+  .home-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
 }
 
 .game-banner-home:hover {
@@ -42,15 +68,18 @@
   animation-fill-mode: both;
 }
 
+/* the middle game rises in from below */
+.memory-type-link:nth-of-type(2) .image-slide,
+.memory-type-link:nth-of-type(2) .button-slide {
+  animation-name: slideInFromDown;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
 @media (max-width: 900px) {
   .game-banner-home {
-    height: 200px;
-    border-radius: 15px;
-    padding: 0px;
-    margin: 0 0 10px 0;
-  }
-  .home-container {
-    flex-direction: column;
+    max-width: 520px;
+    margin: 0 auto 10px;
   }
   .button-slide {
     animation-name: slideInFromTop !important;

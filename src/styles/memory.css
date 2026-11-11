@@ -24,9 +24,17 @@
   align-items: center;
 }
 
+/* spacing comes from gap so both buttons line up, stacked or side by side */
 .memory-game-row {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.memory-game-row .memory-type-link {
+  margin-bottom: 0;
 }
 
 .create-room-button {
@@ -35,10 +43,6 @@
 
 .memory-type-button {
   width: 300px;
-}
-
-.left-button {
-  margin: 0 10px 10px 0;
 }
 
 .memory-type-button {

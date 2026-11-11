@@ -14,12 +14,15 @@ const CreateRoom = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (socket) {
-      socket.on("roomCreatedHangman", (data) => {
-        navigate(`/hangman-multiplayer/${data.roomId}`);
-      });
-    }
-  }, [socket]);
+    if (!socket) return;
+
+    const onRoomCreated = (data) => {
+      navigate(`/hangman-multiplayer/${data.roomId}`);
+    };
+
+    socket.on("roomCreatedHangman", onRoomCreated);
+    return () => socket.off("roomCreatedHangman", onRoomCreated);
+  }, [socket, navigate]);
 
   const onInputChange = (e, type) => {
     const { value } = e.target;
